@@ -31,6 +31,7 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 - https://wasm4.org/blog/jam-2-results/
 - https://github.com/py2many/py2many
 - https://github.com/titzer/virgil
+- https://github.com/deepmind/s6
 
 
 ### TODO
