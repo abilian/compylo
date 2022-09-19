@@ -4,7 +4,7 @@
 
 ### Discussion technique
 
-"stack technique". → on part sur LLVM comme couche d'abstraction. 
+"stack technique". → on part sur LLVM comme couche d'abstraction.
 Attention à la complexité mais en échange on récupère pas mal de bénéfices, dont le multi-targets (mais on se focalisera sur WASM, même si une démo du fait qu'on peut viser facilement d'autres architectures serait utile).
 
 Besoin d'un runtime: strings, bigints, dictionnaires, listes, tuples... Il en existe pour d'autres langages → à adapter.
@@ -20,7 +20,7 @@ Version minimale de Python: 3.10 (de façon à pouvoir utiliser le pattern match
 - Se préoccuper aussi de l'interface avec le système pour faire des programmes standalone (WASI)
 
 ### Benchmarks (ajouté après le call)
-Regarder https://pyperformance.readthedocs.io/ 
+Regarder https://pyperformance.readthedocs.io/
 Attention: rien que d'arriver à faire tourner les programmes en questions est un challenge énorme.
 Les programmes en question sont ici: https://github.com/python/pyperformance/tree/main/pyperformance/data-files/benchmarks
 
@@ -38,3 +38,10 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 - [x] Create repo + donner accès.
 
 
+### Etape 1: Python -> LLVM
+     - Qu'est-ce qui existe déjà ?
+        - Numba utilise LLVM via llvmlite
+        - llvmpy -> wrapper au dessus de la bibliothèque C++ pour python
+        - pyllvm -> compilo static python vers LLVM, talk intéressant sur youtube, date de 2016
+        - py2llvm -> projet abandonné en 2011
+     - Bibliothèque pré-existante ou from scratch ?
