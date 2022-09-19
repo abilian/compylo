@@ -1,10 +1,15 @@
 { pkgs ? import <nixpkgs> {}} :
 
+let
+  pythonPackages = pkgs.python310.withPackages (p: with p; [
+    llvmlite
+  ]);
+in
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    python310
+    pythonPackages
     wasmer
-    llvm  # FIXME: this is LLVM v11.0, is it the one we want or should we use
-          # a more recent version ? (If so, we need to make our own lib)
+    libllvm
+    llvm
   ];
 }
