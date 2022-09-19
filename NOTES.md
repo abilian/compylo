@@ -32,16 +32,27 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 - https://github.com/py2many/py2many
 - https://github.com/titzer/virgil
 - https://github.com/deepmind/s6
+- https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/README.html
 
 
 ### TODO
 - [x] Create repo + donner accès.
 
 
-### Etape 1: Python -> LLVM
-     - Qu'est-ce qui existe déjà ?
-        - Numba utilise LLVM via llvmlite
-        - llvmpy -> wrapper au dessus de la bibliothèque C++ pour python
-        - pyllvm -> compilo static python vers LLVM, talk intéressant sur youtube, date de 2016
-        - py2llvm -> projet abandonné en 2011
-     - Bibliothèque pré-existante ou from scratch ?
+
+### Semaine du 19/09/2022
+
+### Etape 1: Recherches Python -> LLVM
+
+- Qu'est-ce qui existe déjà ?
+    - Numba utilise LLVM via llvmlite
+    - llvmpy -> wrapper au dessus de la bibliothèque C++ pour python. Pas à
+        jour et pas maintenu
+    - py2llvm (sur google code)-> projet abandonné en 2011, bindings LLVM pour python
+    - pyllvm -> compilo static python vers LLVM, talk intéressant sur youtube, date de 2015 utilise py2llvm (google code version)
+    - py2llvm (sur github) -> projet plus récent (2020), ne supporte qu'un petit
+        subset de Python. Utilise llvmlite
+
+- Bibliothèque pré-existante ou from scratch ?
+    Si on prend une bibliothèque pré-existante, llvmlite semble être le choix
+    évident. Par contre llvmlite est fait pour fonctionner avec llvm 11.
