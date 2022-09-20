@@ -11,7 +11,7 @@ class Symbol:
         Symbol.counter += 1
 
     def __str__(self):
-        return self.name
+        return f'{self.name} : {self.type}'
 
     def __eq__(self, other):
         return self.type == other and self.name == other.name
