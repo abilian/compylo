@@ -26,6 +26,13 @@ class ScopedMap:
         dic = self.symbols[-1][1]
         dic[sym.name] = sym
 
+    def update(self, sym):
+        s = self.find(sym.name)
+        if s == None:
+            self.append(sym)
+        else:
+            s.type = sym
+
     def find(self, symName):
         """
             Finds a symbol with a given name in the table.
