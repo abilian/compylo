@@ -43,7 +43,7 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 
 ### Semaine du 19/09/2022
 
-### Etape 1: Recherches Python -> LLVM
+#### Etape 1: Recherches Python -> LLVM
 
 - Qu'est-ce qui existe déjà ?
     - Numba utilise LLVM via llvmlite
@@ -57,3 +57,13 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 - Bibliothèque pré-existante ou from scratch ?
     Si on prend une bibliothèque pré-existante, llvmlite semble être le choix
     évident. Par contre llvmlite est fait pour fonctionner avec llvm 11.
+
+Choix: faire un prototype avec llvmlite et voir après
+
+Questions auxquelles il faudra répondre:
+    - Comment gérer l'Objet ? Piste: regarder comment certains types comme
+      listes, tuple, etc... sont handle par numba et les autres projets
+      au dessus
+    - Problème qui vient découle de celui d'au-dessus: quid de l'overloading ?
+
+#### Etape 2: Symbol, ScopedMap & co, inférence des types
