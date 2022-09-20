@@ -33,6 +33,7 @@ Les programmes en question sont ici: https://github.com/python/pyperformance/tre
 - https://github.com/titzer/virgil
 - https://github.com/deepmind/s6
 - https://mapping-high-level-constructs-to-llvm-ir.readthedocs.io/en/latest/README.html
+- https://evacchi.github.io/llvm/wasm/wasi/2022/04/14/compiling-llvm-ir-into-wasm.html
 
 
 ### TODO
