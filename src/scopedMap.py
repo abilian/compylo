@@ -1,28 +1,44 @@
 class ScopedMap:
-    """
+    '''
         Map holding a list of (str, dict) representing successive scopes of the
         program. The dict is filled with combos `name: symbol`
-    """
+    '''
     def __init__(self):
         self.symbols = [('global', {})]
 
+    def __str__(self):
+        s = '{\n'
+        indent = 1
+        for (name, content) in self.symbols:
+            s += indent * '\t'
+            s += f'{name}:\n'
+            indent += 1
+            for c in content:
+                s += indent * '\t'
+                s += f'{str(content[c])}\n'
+            indent -= 1
+            s += '\n'
+
+        return s
+
+
     def push_scope(self, name):
-        """
+        '''
             Adds a new empty scope into the map
-        """
+        '''
         self.symbols.append((name, {}))
 
     def pop_scope(self):
-        """
+        '''
             Removes the last scope
-        """
+        '''
         if (len(self.symbols) > 0):
             self.symbols.pop()
 
     def append(self, sym):
-        """
+        '''
             Adds a symbol into the last scope
-        """
+        '''
         dic = self.symbols[-1][1]
         dic[sym.name] = sym
 
@@ -34,10 +50,10 @@ class ScopedMap:
             s.type = sym
 
     def find(self, symName):
-        """
+        '''
             Finds a symbol with a given name in the table.
             Returns None if not found
-        """
+        '''
 
         for t in self.symbols:
             if symName in t[1]:
@@ -46,7 +62,7 @@ class ScopedMap:
         return None
 
     def contains(self, sym):
-        """
+        '''
             Checks if a symbol exists in a table, using find
-        """
+        '''
         return self.find(sym) != None
