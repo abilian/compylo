@@ -7,7 +7,7 @@ class ScopedMap:
         self.symbols = [('global', {})]
 
     def __str__(self):
-        s = '{\n'
+        s = 'ScopedMap {\n'
         indent = 1
         for (name, content) in self.symbols:
             s += indent * '\t'
@@ -18,6 +18,7 @@ class ScopedMap:
                 s += f'{str(content[c])}\n'
             indent -= 1
             s += '\n'
+        s += '}'
 
         return s
 
