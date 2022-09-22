@@ -3,6 +3,7 @@
 let
   pythonPackages = pkgs.python310.withPackages (p: with p; [
     llvmlite
+    black
   ]);
 in
 pkgs.mkShell {
