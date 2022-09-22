@@ -66,4 +66,17 @@ Questions auxquelles il faudra répondre:
       au dessus
     - Problème qui vient découle de celui d'au-dessus: quid de l'overloading ?
 
-#### Etape 2: Symbol, ScopedMap & co, inférence des types
+
+
+#### Call du 22/09/2022
+
+Question de la runtime abordée:
+    Où trouver la runtime ? La refaire ne semble pas possible
+    Mais à voir au niveau de l'implem de CPython (c'est du C donc compilable
+    avec LLVM)
+    Comment fait Numba ?
+
+Pour le moment, on peut mettre l'inférence de type de côté et partir sur un truc
+annoté, plus simple pour débuter.
+
+Utiliser Black pour le formattage du code
