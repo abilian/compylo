@@ -12,5 +12,6 @@ pkgs.mkShell {
     wasmer
     libllvm
     llvm
+    pre-commit
   ];
 }
