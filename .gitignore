@@ -1,4 +1,5 @@
 *.*.swp
 .envrc
+*toto*
 
 __pycache__/
