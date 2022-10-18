@@ -80,3 +80,10 @@ Pour le moment, on peut mettre l'inférence de type de côté et partir sur un t
 annoté, plus simple pour débuter.
 
 Utiliser Black pour le formattage du code
+
+
+#### Semaine du 17/09/2022
+
+Notes sur LLVM:
+    les string "hello" et "hello world" n'ont pas le même type. La première est
+    [5 x i8] et la seconde est [11 x i8]

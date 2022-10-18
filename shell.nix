@@ -13,5 +13,6 @@ pkgs.mkShell {
     libllvm
     llvm
     pre-commit
+    clang
   ];
 }
