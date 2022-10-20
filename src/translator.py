@@ -58,7 +58,7 @@ class Translator:
         # FIXME: equivalent of llvmBuilder<>::restoreIP() in llvmlite
 
     def _createFunctionType(self, node):
-        # FIXME: bancal
+        # FIXME: bancal ?
         retType = self._typesMap[node.returns.id]
         argsType = []
 
@@ -74,11 +74,12 @@ class Translator:
         self._visitFunctionBody(node)
 
     def visitReturn(self, node):
-        self.visit(node.value)
+        self._builder.ret(self.visit(node.value))
 
     def visitConstant(self, node):
         # create a constant.
-        pass
+        typ = self._typesMap[str(type(node.value).__name__)]
+        return ir.Constant(typ, node.value)
 
     def visitName(self, node):
         # create a store, load or smth instruction depending on node.ctx
@@ -93,26 +94,25 @@ class Translator:
             Div()       -> _builder.fdiv
             FloorDiv()  -> _builder.sdiv
         """
-        # visit left and right
-        match node.op:
-            case ast.Add():
-                pass
-            case ast.Sub():
-                pass
-            case ast.Mult():
-                pass
-            case ast.Div():
-                pass
-            case ast.FloorDiv():
-                pass
-
+        pass
 
 if __name__ == "__main__":
     with open("./toto.py") as f:
         content = f.read()
 
     root = ast.parse(content)
-    t = Translator(trace=True)
+    t = Translator(True)
     t.visit(root)
-    print()
-    print(t._module)
+    module = t._module
+    builder = t._builder
+
+    ftype = ir.FunctionType(ir.IntType(64), [])
+    main = ir.Function(module, ftype, name='main')
+    bb = main.append_basic_block()
+
+    builder.position_at_end(bb)
+    ret = builder.call(t._functionMap['func'], [])
+
+    builder.ret(ret)
+
+    print(module)
