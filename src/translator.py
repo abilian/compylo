@@ -101,7 +101,7 @@ if __name__ == "__main__":
         content = f.read()
 
     root = ast.parse(content)
-    t = Translator(True)
+    t = Translator(trace=True)
     t.visit(root)
     module = t._module
     builder = t._builder
