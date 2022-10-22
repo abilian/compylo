@@ -87,3 +87,13 @@ Utiliser Black pour le formattage du code
 Notes sur LLVM:
     les string "hello" et "hello world" n'ont pas le même type. La première est
     [5 x i8] et la seconde est [11 x i8]
+
+#### Call du 21/10/2022
+
+Besoin de patch pour compiler en WASM sur NixOS
+Penser à faire des tests !!
+
+Question du `main`:
+    Est-ce qu'on fait un seul point d'entrée ?
+    Est-ce qu'on considère que le main est pas indispensable ? Auquel cas on
+    partirai plutôt sur une idée de bibliothèque
