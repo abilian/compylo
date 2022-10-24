@@ -9,10 +9,10 @@ in
 pkgs.mkShell {
   buildInputs = with pkgs; [
     pythonPackages
-    wasmer
-    libllvm
-    llvm
     pre-commit
-    clang
+    wasmer
+    llvmPackages_14.llvm
+    llvmPackages_14.bintools
+    clang_14
   ];
 }
