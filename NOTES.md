@@ -97,3 +97,42 @@ Question du `main`:
     Est-ce qu'on fait un seul point d'entrée ?
     Est-ce qu'on considère que le main est pas indispensable ? Auquel cas on
     partirai plutôt sur une idée de bibliothèque
+
+#### Semaine du 24/10/2022
+
+Pour avancer LLVM, il faut du typage.
+Donc un retour sur l'inférence de type paraît obligatoire.
+
+Après quelque cafouillage, une solution est trouvée:
+    Il faut faire une première passe qui s'assure que tout existe dans le scope
+    dans lequel il est utilisé.
+
+Comportement un peu tricky en Python:
+```py
+    x = 1
+    def f():
+        x += 1
+```
+ne marche pas, alors que
+```py
+    x = 1
+    def f():
+        print(x)
+```
+fonctionne
+Différence dans l'ast:
+    le context Name() généré est 'store' and le premier cas, et 'load' dans le
+    2e.
+    Est-ce qu'il faut  aller chercher un Name dans le scope actuel et les parents en
+    cas de load, et seulement dans le actuel sinon ?
+À savoir qu'après le 'binding', on peut imaginer une phase de rename, qui
+permettrai d'éliminer un certain nombre de corner cases
+
+Question comme ça:
+```py
+a = 1
+b = a
+c = a + 1
+```
+Le Name(id='a') généré est-il 2 fois le même ? Où est-ce 2 Name() avec un
+contenu différent ?
