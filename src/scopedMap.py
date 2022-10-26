@@ -1,3 +1,6 @@
+from symbol import *
+from typing import List, Dict
+
 class ScopedMap:
     """
     Map holding a list of (str, dict) representing successive scopes of the
@@ -5,21 +8,36 @@ class ScopedMap:
     """
 
     def __init__(self):
-        self.symbols = [("global", {})]
-        self.current = 0
+        self.symbols: Dict[str, List[Symbol]] = {"global": []}
+        self.current: str = "global"
+        self.old: List[str] = []
 
     def __str__(self):
+        """
+        Prints using the following format:
+        ScopedMap {
+            scope1:
+                symbol
+                symbol
+
+            scope2:
+                symbol
+                symbol
+        }
+        """
         s = "ScopedMap {\n"
         indent = 1
-        for (name, content) in self.symbols:
-            s += indent * "\t"
-            s += f"{name}:\n"
+
+        for key in self.symbols:
+            s += indent * "    "
+            s += f"{key}:\n"
             indent += 1
-            for c in content:
-                s += indent * "\t"
-                s += f"{str(content[c])}\n"
+            for sym in self.symbols[key]:
+                s += indent * "    "
+                s += f"{str(sym)}\n"
             indent -= 1
             s += "\n"
+
         s += "}"
 
         return s
@@ -28,44 +46,54 @@ class ScopedMap:
         """
         Adds a new empty scope into the map
         """
-        self.symbols.append((name, {}))
-        self.current += 1
+        self.old.append(self.current)
+        self.symbols[name] = []
+        self.current = name
 
     def pop_scope(self):
         """
         Removes the last scope
         """
-        if self.current > 0:
-            self.current -= 1
+        if self.old != []:
+            self.current = self.old[-1]
+            self.old.pop()
 
     def append(self, sym):
         """
         Adds a symbol into the current scope
         """
-        dic = self.symbols[-1][1]
-        dic[sym.name] = sym
+        self.symbols[self.current].append(sym)
 
-    def update(self, sym):
+    def remove(self, sym):
+        self.symbols[self.current].remove(sym)
+
+    def update(self, sym: Symbol):
         s = self.find(sym.name)
         if s == None:
             self.append(sym)
-        else:
-            s.type = sym
+            return False
 
-    def find(self, symName):
+        s.type = sym.type
+        return True
+
+    def find(self, symName: str, current=True):
         """
         Finds a symbol with a given name in the table.
         Returns None if not found
         """
+        toSearch: List[str] = [self.current] # Scopes where the variable can be found
+        if not current:
+            toSearch += self.old
 
-        for t in self.symbols:
-            if symName in t[1]:
-                return t[1][symName]
+        for scope in toSearch:
+            for symbol in self.symbols[scope]:
+                if symbol.name == symName:
+                    return symbol
 
         return None
 
-    def contains(self, sym):
+    def contains(self, sym, current=False):
         """
         Checks if a symbol exists in a table, using find
         """
-        return self.find(sym) != None
+        return self.find(sym, current) != None
