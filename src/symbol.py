@@ -14,3 +14,6 @@ class Symbol:
             return False
 
         return self.type == other.type and self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
