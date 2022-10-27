@@ -8,9 +8,9 @@ class ScopedMap:
     """
 
     def __init__(self):
-        self.symbols: Dict[str, List[Symbol]] = {"global": []}
-        self.current: str = "global"
-        self.old: List[str] = []
+        self.symbols: Dict[Symbol, List[Symbol]] = { Symbol('global'): [] }
+        self.current: Symbol = Symbol("global")
+        self.old: List[Symbol] = []
 
     def __str__(self):
         """
@@ -58,6 +58,29 @@ class ScopedMap:
             self.current = self.old[-1]
             self.old.pop()
 
+    def __move(self, old: List[Symbol], looking: str):
+        for scope in self.symbols:
+            for sym in self.symbols[scope]:
+                if sym.name == looking:
+                    self.__move(old, scope.name)
+                    old.append(scope)
+
+
+    def move_scope(self, scope: str):
+        """
+        Moves the 'current' scope to a given one, updating 'self.old' as if we
+        were creating the scope.
+        """
+        if scope in list(map(lambda s: s.name, self.old)): # If we're going back to an 'old' scope
+            while self.old.pop().name != scope:
+                continue
+        else:
+            old = []
+            self.__move(old, scope)
+            self.old = old
+
+        self.current = Symbol(scope)
+
     def append(self, sym):
         """
         Adds a symbol into the current scope
@@ -81,7 +104,7 @@ class ScopedMap:
         Finds a symbol with a given name in the table.
         Returns None if not found
         """
-        toSearch: List[str] = [self.current] # Scopes where the variable can be found
+        toSearch: List[Symbol] = [self.current] # Scopes where the variable can be found
         if not current:
             toSearch += self.old
 
