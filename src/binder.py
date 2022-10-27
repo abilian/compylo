@@ -16,7 +16,7 @@ class Binder(ast.NodeVisitor):
         self.map.append(sym)
 
         # Then, add a scope corresponding to the function
-        self.map.push_scope(node.name)
+        self.map.push_scope(sym)
         self.visit(node.args)
         for instr in node.body:
             self.visit(instr)
@@ -39,14 +39,3 @@ class Binder(ast.NodeVisitor):
     def visit_AnnAssign(self, node):
         sym = Symbol(node.target.id, definition=node)
         self.map.update(sym)
-
-
-if __name__ == '__main__':
-    with open('./toto.py') as f:
-        content = f.read()
-
-    root = ast.parse(content)
-    scopedMap = ScopedMap()
-    t = MapVisitor()
-    t.visit(root)
-    print(t.map)
