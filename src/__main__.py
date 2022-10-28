@@ -1,8 +1,8 @@
 from typeVisitor import TypeVisitor
 from binder import Binder
 from renamer import Renamer
-import sys
-import ast
+from errors import *
+import sys, ast, traceback
 
 
 def main():
@@ -17,9 +17,17 @@ def main():
 
     root = ast.parse(content)
 
-    Binder()(root)
-    Renamer()(root)
-    TypeVisitor()(root)
+    try:
+        Binder()(root)
+        Renamer()(root)
+        TypeVisitor()(root)
+        TypeVisitor()(root)
+    except UnknownSymbolError as e:
+        traceback.print_exception(e)
+        sys.exit(2)
+    except UnknownTypeError or IncompatibleTypeError as e:
+        traceback.print_exception(e)
+        sys.exit(3)
 
     return 0
 
