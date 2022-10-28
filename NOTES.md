@@ -136,3 +136,11 @@ c = a + 1
 ```
 Le Name(id='a') généré est-il 2 fois le même ? Où est-ce 2 Name() avec un
 contenu différent ?
+Réponse: C'en est 2 différents
+
+La classe ast.NodeTransformer permet de changer des noeuds l'ast (cf doc).
+Est-elle utile pour le renamer ? Non. Car son but semble de remplacer les noeuds
+existants par des nouveaux. Très utile pour désucrer des trucs par contre, tels
+que `ast.AugAssign` ou autre.
+Dans le cas du renamer, comme on veut juste update un champ existant, le
+visiteur suffit.
