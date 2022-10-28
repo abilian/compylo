@@ -4,9 +4,10 @@ import ast
 
 class Binder(ast.NodeVisitor):
     """
-        First visitor to be ran, can most likely be refactor-ed within the other
-        visitors. It just fills the a scopedMap with symbols.
+    First visitor to be ran, can most likely be refactor-ed within the other
+    visitors. It just fills the a scopedMap with symbols.
     """
+
     def __init__(self):
         self.map = ScopedMap()
 
@@ -31,11 +32,18 @@ class Binder(ast.NodeVisitor):
         sym = Symbol(node.arg, definition=node)
         self.map.append(sym)
 
-    def visit_Assign(self, node):
-        for t in node.targets:
-            sym = Symbol(t.id, definition=t)
-            self.map.append(sym)
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        self.visit(node.target)
+        self.visit(node.value)
 
-    def visit_AnnAssign(self, node):
-        sym = Symbol(node.target.id, definition=node)
-        self.map.append(sym)
+    def visit_Name(self, node):
+        if isinstance(node.ctx, ast.Load):
+            sym = self.map.find(node.id)
+            if sym is None:
+                raise Exception(f'Undefined symbol: {node.id}')
+            node.definition = sym.definition
+        elif isinstance(node.ctx, ast.Store):
+            sym = Symbol(node.id, definition=node)
+            self.map.append(sym)
+        else:
+            raise NotImplementedError('del instruction not yet implemented')

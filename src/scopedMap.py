@@ -1,6 +1,7 @@
 from symbol import *
 from typing import List, Dict
 
+
 class ScopedMap:
     """
     Map holding a list of (str, dict) representing successive scopes of the
@@ -8,7 +9,7 @@ class ScopedMap:
     """
 
     def __init__(self):
-        self.symbols: Dict[Symbol, List[Symbol]] = { Symbol('global'): [] }
+        self.symbols: Dict[Symbol, List[Symbol]] = {Symbol("global"): []}
         self.current: Symbol = Symbol("global")
         self.old: List[Symbol] = []
 
@@ -65,13 +66,14 @@ class ScopedMap:
                     self.__move(old, scope.name)
                     old.append(scope)
 
-
     def move_scope(self, scope: str):
         """
         Moves the 'current' scope to a given one, updating 'self.old' as if we
         were creating the scope.
         """
-        if scope in list(map(lambda s: s.name, self.old)): # If we're going back to an 'old' scope
+        if scope in list(
+            map(lambda s: s.name, self.old)
+        ):  # If we're going back to an 'old' scope
             while self.old.pop().name != scope:
                 continue
         else:
@@ -85,7 +87,8 @@ class ScopedMap:
         """
         Adds a symbol into the current scope
         """
-        self.symbols[self.current].append(sym)
+        if sym not in self.symbols[self.current]:
+            self.symbols[self.current].append(sym)
 
     def remove(self, sym):
         self.symbols[self.current].remove(sym)
@@ -95,7 +98,9 @@ class ScopedMap:
         Finds a symbol with a given name in the table.
         Returns None if not found
         """
-        toSearch: List[Symbol] = [self.current] # Scopes where the variable can be found
+        toSearch: List[Symbol] = [
+            self.current
+        ]  # Scopes where the variable can be found
         if not current:
             toSearch += self.old
 

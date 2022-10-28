@@ -1,7 +1,7 @@
 class Symbol:
     def __init__(self, name, definition=None):
         self.name: str = name
-        self.definition = definition # The node where the symbol was defined
+        self.definition = definition  # The node where the symbol was defined
 
     def __str__(self):
         if self.definition is not None:
