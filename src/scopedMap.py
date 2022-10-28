@@ -90,15 +90,6 @@ class ScopedMap:
     def remove(self, sym):
         self.symbols[self.current].remove(sym)
 
-    def update(self, sym: Symbol):
-        s = self.find(sym.name)
-        if s == None:
-            self.append(sym)
-            return False
-
-        s.type = sym.type
-        return True
-
     def find(self, symName: str, current=True):
         """
         Finds a symbol with a given name in the table.

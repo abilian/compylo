@@ -29,13 +29,13 @@ class Binder(ast.NodeVisitor):
 
     def visit_arg(self, node):
         sym = Symbol(node.arg, definition=node)
-        self.map.update(sym)
+        self.map.append(sym)
 
     def visit_Assign(self, node):
         for t in node.targets:
             sym = Symbol(t.id, definition=t)
-            self.map.update(sym)
+            self.map.append(sym)
 
     def visit_AnnAssign(self, node):
         sym = Symbol(node.target.id, definition=node)
-        self.map.update(sym)
+        self.map.append(sym)
