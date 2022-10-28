@@ -96,6 +96,7 @@ class Translator:
         """
         pass
 
+
 if __name__ == "__main__":
     with open("./toto.py") as f:
         content = f.read()
@@ -107,11 +108,11 @@ if __name__ == "__main__":
     builder = t._builder
 
     ftype = ir.FunctionType(ir.IntType(64), [])
-    main = ir.Function(module, ftype, name='main')
+    main = ir.Function(module, ftype, name="main")
     bb = main.append_basic_block()
 
     builder.position_at_end(bb)
-    ret = builder.call(t._functionMap['func'], [])
+    ret = builder.call(t._functionMap["func"], [])
 
     builder.ret(ret)
 
