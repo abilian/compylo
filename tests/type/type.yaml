@@ -1,0 +1,20 @@
+- testsuite:
+  - test:
+    - file: ./function_wrong_arg_type.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./function_wrong_arg_type_assign.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./int_annot_string_assign.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./unknown_type.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./var_alias_wrong_type.py
+    - exit_code: XXX

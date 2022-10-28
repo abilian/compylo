@@ -1,0 +1,16 @@
+- testsuite:
+  - test:
+    - file: ./call_function_noexist.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./function_return_noexist.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./use_out_scope_rvalue.py
+    - exit_code: XXX
+
+  - test:
+    - file: ./variable_noexist.py
+    - exit_code: XXX

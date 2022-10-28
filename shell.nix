@@ -4,6 +4,7 @@ let
   pythonPackages = pkgs.python310.withPackages (p: with p; [
     llvmlite
     black
+    pytest
   ]);
 in
 pkgs.mkShell {
