@@ -1,3 +1,12 @@
+class UnknownSymbolError(Exception):
+    def __init__(self, sym, message=None):
+        self.sym = sym
+        if message is None:
+            self.message = f"Unknown symbol: {self.sym}"
+        else:
+            self.message = message
+
+
 class UnknownTypeError(Exception):
     def __init__(self, typ, message=None):
         self.typ = typ

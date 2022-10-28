@@ -1,6 +1,7 @@
 from scopedMap import ScopedMap
 from symbol import Symbol
 from visitor import NodeVisitor
+from errors import UnknownSymbolError
 import ast
 
 
@@ -67,7 +68,7 @@ class Binder(NodeVisitor):
         if isinstance(node.ctx, ast.Load):
             sym = self.map.find(node.id, False)
             if sym is None:
-                raise Exception(f"Undefined symbol: {node.id}")
+                raise UnknownSymbolError(node.id)
             node.definition = sym.definition
         elif isinstance(node.ctx, ast.Store):
             sym = Symbol(node.id, definition=node)
