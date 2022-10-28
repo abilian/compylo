@@ -1,9 +1,10 @@
 from scopedMap import ScopedMap
 from symbol import Symbol
+from visitor import NodeVisitor
 import ast
 
 
-class Binder(ast.NodeVisitor):
+class Binder(NodeVisitor):
     """
     First visitor to be ran, can most likely be refactor-ed within the other
     visitors. It just fills the a scopedMap with symbols.
@@ -15,10 +16,6 @@ class Binder(ast.NodeVisitor):
     def __call__(self, node):
         self.visit(node)
         return self.map
-
-    def __visit_list(self, l):
-        for instr in l:
-            self.visit(instr)
 
     def visit_FunctionDef(self, node):
         """
@@ -32,7 +29,7 @@ class Binder(ast.NodeVisitor):
 
         self.map.push_scope(sym)
         self.visit(node.args)
-        self.__visit_list(node.body)
+        self.visit_list(node.body)
 
         self.map.pop_scope()
 
@@ -47,7 +44,7 @@ class Binder(ast.NodeVisitor):
 
     def visit_Call(self, node):
         self.visit(node.func)
-        self.__visit_list(node.args)
+        self.visit_list(node.args)
 
     def visit_AnnAssign(self, node):
         """

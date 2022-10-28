@@ -1,7 +1,8 @@
 import ast
+from visitor import NodeVisitor
 
 
-class Renamer(ast.NodeVisitor):
+class Renamer(NodeVisitor):
     counter = 0
 
     def __call__(self, ast):
@@ -12,13 +13,23 @@ class Renamer(ast.NodeVisitor):
         Renamer.counter += 1
         return res
 
+    def __change_Name_id(self, node: ast.Name, definition):
+        match type(definition):
+            case ast.Name:  # classic variable
+                node.id = definition.id
+            case ast.arg:  # function argument
+                node.id = definition.arg
+            case ast.FunctionDef:  # function call
+                node.id = definition.name
+            case _:
+                raise NotImplementedError("This is weird")
+
     def visit_FunctionDef(self, node):
         newName = self.__gen_Name(node.name)
         node.name = newName
 
         self.visit(node.args)
-        for instr in node.body:
-            self.visit(instr)
+        self.visit_list(node.body)
 
     def visit_arg(self, node):
         node.arg = self.__gen_Name(node.arg)
@@ -31,14 +42,6 @@ class Renamer(ast.NodeVisitor):
         if isinstance(node.ctx, ast.Store):
             node.id = self.__gen_Name(node.id)
         elif isinstance(node.ctx, ast.Load):
-            match type(node.definition):
-                case ast.Name:  # classic variable
-                    node.id = node.definition.id
-                case ast.arg:  # function argument
-                    node.id = node.definition.arg
-                case ast.FunctionDef:  # function call
-                    node.id = node.definition.name
-                case _:
-                    raise NotImplementedError("This is weird")
+            self.__change_Name_id(node, node.definition)
         else:
             raise NotImplementedError("del instruction not implemented yet")
