@@ -49,6 +49,8 @@ class TypeVisitor(NodeVisitor):
         self.visit(node.value)
         typ = node.annotation.id
 
+        if not self.__exists(typ):
+            raise UnknownTypeError(typ)
         if not self._are_compatible(typ, node.value.typ):
             raise IncompatibleTypeError(typ, node.value.typ)
 
