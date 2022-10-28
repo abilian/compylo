@@ -16,6 +16,10 @@ class Binder(ast.NodeVisitor):
         self.visit(node)
         return self.map
 
+    def __visit_list(self, l):
+        for instr in l:
+            self.visit(instr)
+
     def visit_FunctionDef(self, node):
         """
         Create a symbol for the function, adds it to the scoped map.
@@ -28,8 +32,7 @@ class Binder(ast.NodeVisitor):
 
         self.map.push_scope(sym)
         self.visit(node.args)
-        for instr in node.body:
-            self.visit(instr)
+        self.__visit_list(node.body)
 
         self.map.pop_scope()
 
@@ -41,6 +44,10 @@ class Binder(ast.NodeVisitor):
         sym = Symbol(node.arg, definition=node)
         self.map.append(sym)
         node.definition = node
+
+    def visit_Call(self, node):
+        self.visit(node.func)
+        self.__visit_list(node.args)
 
     def visit_AnnAssign(self, node):
         """

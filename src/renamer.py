@@ -32,9 +32,13 @@ class Renamer(ast.NodeVisitor):
             node.id = self.__gen_Name(node.id)
         elif isinstance(node.ctx, ast.Load):
             match type(node.definition):
-                case ast.Name:
+                case ast.Name:  # classic variable
                     node.id = node.definition.id
-                case ast.arg:
+                case ast.arg:  # function argument
                     node.id = node.definition.arg
+                case ast.FunctionDef:  # function call
+                    node.id = node.definition.name
+                case _:
+                    raise NotImplementedError("This is weird")
         else:
             raise NotImplementedError("del instruction not implemented yet")
