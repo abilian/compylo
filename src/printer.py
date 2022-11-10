@@ -14,7 +14,7 @@ class Printer(NodeVisitor):
     def __decrIndent(self):
         Printer.Indent -= 4
 
-    def __printDef(self, node):
+    def __printDef(self, node: ast.AST):
         if hasattr(node, "definition"):
             self.__print(f"  # {self.__extract_address(node)}")
 
@@ -58,7 +58,7 @@ class Printer(NodeVisitor):
         self.visit(node.annotation)
         self.__print(" = ")
         self.visit(node.value)
-        print("")
+        print()
 
     def visit_Constant(self, node: ast.Constant):
         self.__print(node.value)
