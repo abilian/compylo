@@ -55,15 +55,23 @@ def dependencies(action: str, node: ast.AST):
         return get_action(action)(node)
 
     dependencies(dependenciesMap[action][0], node)
-    # FIXME: with this approach, only flags can only have 1 dep
+    # FIXME: with this approach, flags can only have 1 dep
 
     return get_action(action)(node)
+
+
+def arg_action(args: argparse.Namespace):
+    if args.rename:
+        return "rename"
+    if args.bind:
+        return "bind"
+
+    return "type"
 
 
 def main():
     parser = setup_parser()
     args = parser.parse_args()
-    print(args)
     file = args.FILENAME
 
     with open(file) as f:
@@ -72,7 +80,10 @@ def main():
     root = ast.parse(content)
 
     try:
-        pass
+        action = arg_action(args)
+        dependencies(action, root)
+        if args.print:
+            Printer()(root)
     except UnknownSymbolError as e:
         traceback.print_exception(e)
         sys.exit(2)
