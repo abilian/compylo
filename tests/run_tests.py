@@ -44,11 +44,11 @@ def runTests(testList: List[YamlTestCase]):
         print(t.name.ljust(48, " "), end="")
         if runTest(t):
             print(OK_LABEL.ljust(16, " "), end="")
-            print(t.file)
+            print(tc.colored(f"-> {t.file}", "cyan"))
             return True
 
         print(KO_LABEL.ljust(16, " "), end="")
-        print(t.file)
+        print(tc.colored(f"-> {t.file}", "cyan"))
         return False
 
     return sum(map(run, testList))
@@ -66,10 +66,11 @@ if __name__ == "__main__":
         passed += successfulTests
         failed += len(testList) - successfulTests
 
-    print(
-        f"""
-passed: {passed}
-failed: {failed}
-total: {total}
-"""
-    )
+    passed_message = tc.colored(f"PASSED: {passed}", "green")
+    failed_message = tc.colored(f"FAILED: {failed}", "red")
+    total_message = tc.colored(f"TOTAL: {total}", "blue")
+
+    print()
+    print(passed_message)
+    print(failed_message)
+    print(total_message)
