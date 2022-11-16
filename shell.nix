@@ -5,6 +5,7 @@ let
     llvmlite
     black
     pytest
+    pyyaml
   ]);
 in
 pkgs.mkShell {
