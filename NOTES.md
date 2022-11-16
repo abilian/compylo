@@ -144,3 +144,33 @@ existants par des nouveaux. Très utile pour désucrer des trucs par contre, tel
 que `ast.AugAssign` ou autre.
 Dans le cas du renamer, comme on veut juste update un champ existant, le
 visiteur suffit.
+
+
+#### Semaine du 14/11
+
+L'écriture de tests a commencé.
+Les tests sont actuellements générés dans tests/generate\_tests.py et lancés par
+tests/run\_tests.py.
+
+Tester la véracité du binder (s'assurer que les bons noeuds ont bien les bonnes
+adresses de définition) est complexe.
+Une solution pourrait-être d'utiliser d'avoir un pretty-printer, de print avec
+la definition, de modifier le programme et de le re-parser.
+exemple:
+le programme
+```py
+a : int = 2
+b : int = a
+```
+
+sera pretty-print de la façon suivante (après binding)
+```py
+a__0xcafe : int = 2
+b__0xbabe : int = a__0xcafe
+```
+
+Si la definition n'est pas la bonne, alors le `a__0xcafe` dans l'assignation de
+b ne sera pas bon, et on échouera au binding en essayant de re-parser l'output
+du pretty printer.
+Cela revient à faire quelque chose du genre:
+`compylo -BP toto.py > tata.py` && `compylo -B tata.py` sans avoir d'erreur
