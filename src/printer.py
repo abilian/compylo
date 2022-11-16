@@ -17,7 +17,7 @@ class Printer(NodeVisitor):
     def __printWithDef(self, toPrint: str, node: ast.AST):
         self.__print(toPrint)
         if hasattr(node, "definition"):
-            self.__print(f"__{self.__extract_address(node)}")
+            self.__print(f"__{self.__extract_address(node.definition)}")
 
     def __print(self, s: str):
         print(s, end="")
