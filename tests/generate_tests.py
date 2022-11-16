@@ -1,30 +1,11 @@
-from os.path import isfile, join
-from os import listdir
 import pathlib
 import sys
+import yaml
+
 from typing import List
-
-PATH = "src/"
-DEFAULT_ARGS = "-T"
-DIRECTORIES = ["good", "bind", "type"]
-
-
-class YamlTestCase:
-    def __init__(self, name: str, args: str, file: str, exit_code: int):
-        self.args = args
-        self.name = name
-        self.file = file
-        self.exit = exit_code
-        self.command = f"{PATH} {self.args} {self.file}"
-
-    def __repr__(self):
-        return f"""test:
-    - name: {self.name}
-    - file: {self.file}
-    - exit_code: {self.exit}
-    - command: {self.command}
-
-"""
+from os.path import isfile, join
+from os import listdir
+from utils import *
 
 
 def __get_args(filePath: pathlib.PosixPath):
@@ -39,13 +20,11 @@ def __get_args(filePath: pathlib.PosixPath):
             sys.exit(f"{filePath} not in the right place !")
 
 
-"""
+def generateTestCase(filePath: pathlib.PosixPath):
+    """
     @brief              Generates the yaml for 1 test
     @param filePath     path of the file to the script against
-"""
-
-
-def generateTestCase(filePath: pathlib.PosixPath):
+    """
     assert filePath.suffix == ".py"
     file = str(filePath)
     name = filePath.stem
@@ -55,20 +34,24 @@ def generateTestCase(filePath: pathlib.PosixPath):
     return YamlTestCase(name, args, file, exit_code)
 
 
-"""
+def generateYaml(filename: str, tests: List[str]):
+    """
     @brief              Generates a Yaml file for tests
     @param filename     The name of the file to generate
     @param tests        A list of the files to test from this yaml
-"""
-
-
-def generateYaml(filename: str, tests: List[str]):
+    """
     with open(filename, "w+") as f:
-        for testFiles in tests:
-            path = pathlib.PosixPath(testFiles)
-            print(f"path: {path}")
+        l = len(tests)
+        if l > 0:
+            path = pathlib.PosixPath(tests[0])
             case = generateTestCase(path)
-            f.write(str(case))
+            f.write(f"{yaml.dump(case)}")
+
+        for i in range(1, l):
+            testFile = tests[i]
+            path = pathlib.PosixPath(testFile)
+            case = generateTestCase(path)
+            f.write(f"---\n{yaml.dump(case)}")
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ let
     black
     pytest
     pyyaml
+    termcolor
   ]);
 in
 pkgs.mkShell {
