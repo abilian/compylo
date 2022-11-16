@@ -2,5 +2,6 @@
 .envrc
 *toto*
 *.ll
+tests/*.yaml
 
 __pycache__/
