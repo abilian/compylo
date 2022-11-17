@@ -1,4 +1,4 @@
-from symbol import *
+from .symbol import *
 from typing import List, Dict
 
 

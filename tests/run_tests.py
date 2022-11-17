@@ -1,6 +1,6 @@
 import yaml
 import subprocess
-from utils import *
+from .utils import *
 from typing import List
 import termcolor as tc
 
@@ -8,13 +8,11 @@ OK_LABEL = tc.colored("[ OK ]".ljust(12, " "), "green")
 KO_LABEL = tc.colored("[ KO ]".ljust(12, " "), "red")
 
 
-def getTestList(filePath: str):
+def getTestList(filePath: str) -> List[YamlTestCase]:
     res = []
     with open(filePath) as f:
         content = f.read()
-        data = yaml.load_all(content, yaml.Loader)
-        for d in data:
-            res.append(d)
+        res = [x for x in yaml.load_all(content, yaml.Loader)]
 
     return res
 
@@ -34,7 +32,7 @@ def runTest(test: YamlTestCase) -> bool:
     return ret == test.exit_code
 
 
-def runTests(testList: List[YamlTestCase]):
+def runTests(testList: List[YamlTestCase]) -> int:
     """
     @brief              Returns the list of all successful tests
     @param  testList    The list of tests to be ran

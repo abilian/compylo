@@ -5,7 +5,7 @@ import yaml
 from typing import List
 from os.path import isfile, join
 from os import listdir
-from utils import *
+from .utils import *
 
 
 def __get_args(filePath: pathlib.PosixPath):

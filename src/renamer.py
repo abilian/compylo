@@ -1,5 +1,5 @@
 import ast
-from visitor import NodeVisitor
+from .visitor import NodeVisitor
 
 
 class Renamer(NodeVisitor):

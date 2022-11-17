@@ -1,8 +1,8 @@
-from typeVisitor import TypeVisitor
-from printer import Printer
-from binder import Binder
-from renamer import Renamer
-from errors import *
+from .typeVisitor import TypeVisitor
+from .printer import Printer
+from .binder import Binder
+from .renamer import Renamer
+from .errors import *
 import argparse
 import sys, ast, traceback
 
@@ -84,10 +84,10 @@ def main():
         dependencies(action, root)
         if args.print:
             Printer()(root)
-    except UnknownSymbolError as e:
+    except BindError as e:
         traceback.print_exception(e)
         sys.exit(2)
-    except UnknownTypeError or IncompatibleTypeError as e:
+    except TypeCheckError as e:
         traceback.print_exception(e)
         sys.exit(3)
 

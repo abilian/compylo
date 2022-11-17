@@ -1,5 +1,5 @@
-from errors import UnknownTypeError, IncompatibleTypeError
-from visitor import NodeVisitor
+from .errors import UnknownTypeError, IncompatibleTypeError
+from .visitor import NodeVisitor
 import ast
 
 

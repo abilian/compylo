@@ -1,4 +1,5 @@
-from run_tests import *
+from .run_tests import *
+from .binder_tests import *
 
 if __name__ == "__main__":
     passed = 0

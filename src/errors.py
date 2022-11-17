@@ -1,4 +1,12 @@
-class UnknownSymbolError(Exception):
+class BindError(Exception):
+    pass
+
+
+class TypeCheckError(Exception):
+    pass
+
+
+class UnknownSymbolError(BindError):
     def __init__(self, sym, message=None):
         self.sym = sym
         if message is None:
@@ -7,7 +15,7 @@ class UnknownSymbolError(Exception):
             self.message = message
 
 
-class UnknownTypeError(Exception):
+class UnknownTypeError(TypeCheckError):
     def __init__(self, typ, message=None):
         self.typ = typ
         if message is None:
@@ -16,7 +24,7 @@ class UnknownTypeError(Exception):
             self.message = message
 
 
-class IncompatibleTypeError(Exception):
+class IncompatibleTypeError(TypeCheckError):
     def __init__(self, t1, t2, message=None):
         self.t1 = t1
         self.t2 = t2
