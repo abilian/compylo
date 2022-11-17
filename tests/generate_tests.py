@@ -41,17 +41,15 @@ def generateYaml(filename: str, tests: List[str]):
     @param tests        A list of the files to test from this yaml
     """
     with open(filename, "w+") as f:
-        l = len(tests)
-        if l > 0:
-            path = pathlib.PosixPath(tests[0])
-            case = generateTestCase(path)
-            f.write(f"{yaml.dump(case)}")
-
-        for i in range(1, l):
-            testFile = tests[i]
-            path = pathlib.PosixPath(testFile)
-            case = generateTestCase(path)
-            f.write(f"---\n{yaml.dump(case)}")
+        f.write(
+            yaml.dump_all(
+                list(
+                    map(
+                        lambda t: generateTestCase(pathlib.PosixPath(t)), tests
+                    )
+                )
+            )
+        )
 
 
 if __name__ == "__main__":
