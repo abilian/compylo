@@ -3,5 +3,6 @@
 *toto*
 *.ll
 tests/*.yaml
+*.egg-info
 
 __pycache__/
