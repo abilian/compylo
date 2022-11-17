@@ -2,10 +2,11 @@ from .run_tests import *
 from .binder_tests import *
 
 if __name__ == "__main__":
-    passed = 0
-    failed = 0
-    total = 0
 
+    passed, total = testBinder()
+    failed = total - passed
+
+    printCategory("GLOBAL")
     for d in DIRECTORIES:
         testList = getTestList(f"{d}.yaml")
         total += len(testList)

@@ -32,21 +32,25 @@ def runTest(test: YamlTestCase) -> bool:
     return ret == test.exit_code
 
 
-def runTests(testList: List[YamlTestCase]) -> int:
+def runTests(testList: List[YamlTestCase], run=None) -> int:
     """
-    @brief              Returns the list of all successful tests
+    @brief              Returns the sumber of successful tests
     @param  testList    The list of tests to be ran
     """
 
-    def run(t):
-        print(t.name.ljust(48, " "), end="")
-        if runTest(t):
-            print(OK_LABEL.ljust(16, " "), end="")
-            print(tc.colored(f"-> {t.file}", "cyan"))
-            return True
+    if run is None:
 
-        print(KO_LABEL.ljust(16, " "), end="")
-        print(tc.colored(f"-> {t.file}", "cyan"))
-        return False
+        def run_default(t):
+            print(t.name.ljust(48, " "), end="")
+            if runTest(t):
+                print(OK_LABEL.ljust(16, " "), end="")
+                print(tc.colored(f"-> {t.file}", "cyan"))
+                return True
+
+            print(KO_LABEL.ljust(16, " "), end="")
+            print(tc.colored(f"-> {t.file}", "cyan"))
+            return False
+
+        run = run_default
 
     return sum(map(run, testList))

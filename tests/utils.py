@@ -1,4 +1,6 @@
-PATH = "src/"
+import termcolor as tc
+
+PATH = "src"
 DEFAULT_ARGS = "-T"
 DIRECTORIES = ["tests/good", "tests/bind", "tests/type"]
 
@@ -9,7 +11,7 @@ class YamlTestCase:
         self.name = name
         self.file = file
         self.exit_code = exit_code
-        self.command = f"python {PATH} {self.args} {self.file}"
+        self.command = f"python -m {PATH} {self.args} {self.file}"
 
     def __repr__(self):
         return f"""test:
@@ -19,3 +21,11 @@ class YamlTestCase:
     - command: {self.command}
 
 """
+
+
+def printCategory(cat: str):
+    print(
+        tc.colored(
+            f"\n\n==============      {cat}       ==============", "magenta"
+        )
+    )
