@@ -38,17 +38,29 @@ class Printer(NodeVisitor):
         self.visit_list(node.body)
         self.__decrIndent()
 
+    def visit_arg(self, node: ast.arg):
+        self.__printWithDef(node.arg, node)
+        if hasattr(node, "annotation"):
+            self.__print(f" : {node.annotation.id}")
+        self.__print(" ")
+
     def visit_Return(self, node):
         s: str = Printer.Indent * " "
         self.__print(s + "return ")
         self.visit(node.value)
         print()
 
-    def visit_arg(self, node: ast.arg):
-        self.__printWithDef(node.arg, node)
-        if hasattr(node, "annotation"):
-            self.__print(f" : {node.annotation.id}")
-        self.__print(" ")
+    def visit_Call(self, node: ast.Call):
+        self.visit(node.func)
+        print("(", end="")
+        if node.args:
+            l = len(node.args)
+            self.visit(node.args[0])
+            for i in range(1, l):
+                print(", ", end="")
+                self.visit(node.args[i])
+
+        print(")", end="")
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
         self.visit(node.target)
