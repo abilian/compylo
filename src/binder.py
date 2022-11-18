@@ -7,8 +7,7 @@ import ast
 
 class Binder(NodeVisitor):
     """
-    First visitor to be ran, can most likely be refactor-ed within the other
-    visitors. It just fills the a scopedMap with symbols.
+    @brief First visitor to be ran. Adds an attribute `definition` to ast nodes
     """
 
     def __init__(self):
@@ -18,10 +17,11 @@ class Binder(NodeVisitor):
         self.visit(node)
         return self.map
 
-    def visit_FunctionDef(self, node):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
         """
-        Create a symbol for the function, adds it to the scoped map.
-        Pushes a new scope and visits the function within this new scope
+        @brief          Creates a symbol for the function and sets the node's
+                        definition to itself
+        @param  node    FunctionDef to be visited
         """
 
         sym = Symbol(node.name, definition=node)
@@ -34,36 +34,42 @@ class Binder(NodeVisitor):
 
         self.map.pop_scope()
 
-    def visit_arg(self, node):
+    def visit_arg(self, node: ast.arg):
         """
-        Creates a symbol for the arg, adds it to the map and sets the definition
-        of the node to itself
+        @brief          Creates a new symbol for the argument, and sets the
+                        node's definition to itself
+        @param  node    arg to be visited
         """
         sym = Symbol(node.arg, definition=node)
         self.map.append(sym)
         node.definition = node
 
-    def visit_Call(self, node):
+    def visit_Call(self, node: ast.Call):
+        """
+        @brief          Visits the Call node
+        @param  node    Call to be visited
+        """
         self.visit(node.func)
         self.visit_list(node.args)
+        node.definition = node.func.definition
 
-    def visit_AnnAssign(self, node):
+    def visit_AnnAssign(self, node: ast.AnnAssign):
         """
-        Do not visit the annotation (temporary)
+        @brief          Visit the terms of the equality, but not the annotation.
+                        will likely be removed at some point
+        @param  node    AnnAssign to be visited
         """
         self.visit(node.target)
         self.visit(node.value)
 
     def visit_Name(self, node):
         """
-        Visits a name.
-        If context is `ast.Load`, variable is used as rValue
-            -> look it up in the table and throw error if undefined
-        Else if context is `ast.Store`, variable is used a lValue
-            -> create a new symbol and sets the definition of the node.
-            FIXME: for AugAssign, this doesn't work
-        Else (context is `ast.Del`)
-           -> remove the symbol ? FIXME: Not Implemented
+        @brief          If the context is ast.Load, check for the symbol in the
+                        symbol table, raise UnknownSymbolError if not found,
+                        else sets the node's definition to the symbol's.
+                        If the context is ast.Store, creates a new symbol and
+                        sets the node's definition to itself.
+        @param  node    Name to be visited
         """
         if isinstance(node.ctx, ast.Load):
             sym = self.map.find(node.id, False)
@@ -76,3 +82,14 @@ class Binder(NodeVisitor):
             node.definition = node
         else:
             raise NotImplementedError("del instruction not yet implemented")
+
+
+"""
+Currently supported nodes:
+    - FunctionDef
+    - argument
+    - arg
+    - Call
+    - AnnAssign
+    - Name
+"""

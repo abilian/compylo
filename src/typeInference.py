@@ -26,9 +26,10 @@ class TypeInference(NodeVisitor):
         else:
             raise UnknownTypeError(typ)
 
-    def visit_FunctionDef(self, node):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
         """
-        Adds the `typ` attribute to the node, using annotation
+        @brief              Adds the `typ` attribute to the node, using annotation
+        @param      node    FunctionDef to be visited
         """
         self.__update_Node(node, node.returns.id)
 
