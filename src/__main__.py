@@ -1,4 +1,4 @@
-from .typeVisitor import TypeVisitor
+from .typeInference import TypeInference
 from .printer import Printer
 from .binder import Binder
 from .renamer import Renamer
@@ -37,7 +37,7 @@ def get_action(action: str):
         "print": Printer(),
         "bind": Binder(),
         "rename": Renamer(),
-        "type": TypeVisitor(),
+        "type": TypeInference(),
     }
 
     return actionMap[action]

@@ -1,9 +1,9 @@
-from .errors import UnknownTypeError, IncompatibleTypeError
+from .errors import UnknownTypeError
 from .visitor import NodeVisitor
 import ast
 
 
-class TypeVisitor(NodeVisitor):
+class TypeInference(NodeVisitor):
     """
     Visitor that types the symbols within a map
     """
@@ -13,9 +13,6 @@ class TypeVisitor(NodeVisitor):
 
     def __call__(self, node):
         self.visit(node)
-
-    def _are_compatible(self, typ1, typ2):
-        return True
 
     def __exists(self, typ):
         """
@@ -51,8 +48,6 @@ class TypeVisitor(NodeVisitor):
 
         if not self.__exists(typ):
             raise UnknownTypeError(typ)
-        if not self._are_compatible(typ, node.value.typ):
-            raise IncompatibleTypeError(typ, node.value.typ)
 
         node.target.typ = typ
 
