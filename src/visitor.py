@@ -1,7 +1,7 @@
-import ast
+from ast import NodeVisitor as Visitor
 
 
-class NodeVisitor(ast.NodeVisitor):
+class NodeVisitor(Visitor):
     def visit_list(self, l):
         for instr in l:
             self.visit(instr)
