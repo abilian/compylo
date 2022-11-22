@@ -1,5 +1,6 @@
 from .errors import UnknownTypeError
 from .visitor import NodeVisitor
+from .types import Int, Float, Bool
 import ast
 
 
@@ -9,7 +10,7 @@ class TypeInference(NodeVisitor):
     """
 
     def __init__(self):
-        self.typeMap = {"int": None, "str": None, "float": None, "bool": None}
+        self.typeMap = {"int": Int, "str": None, "float": Float, "bool": Bool}
 
     def __call__(self, node):
         self.visit(node)
@@ -36,7 +37,7 @@ class TypeInference(NodeVisitor):
         self.visit(node.args)
         self.visit_list(node.body)
 
-    def visit_arg(self, node):
+    def visit_arg(self, node: ast.arg):
         """
         @brief          Sets the node's typ to its annotation.
         @param  node    arg to be visited
@@ -44,14 +45,14 @@ class TypeInference(NodeVisitor):
         typ = node.annotation.id
         node.typ = typ
 
-    def visit_Call(self, node):
+    def visit_Call(self, node: ast.Call):
         """
         @brief          Sets the node's type to its definition's
         @param  node    Call to be visited
         """
         node.typ = node.definition.typ
 
-    def visit_AnnAssign(self, node):
+    def visit_AnnAssign(self, node: ast.AnnAssign):
         """
         @brief          Sets the node's type to its annotation
         @param  node    AnnAssign to be visited
@@ -62,9 +63,9 @@ class TypeInference(NodeVisitor):
         if not self.__exists(typ):
             raise UnknownTypeError(typ)
 
-        node.target.typ = typ
+        node.target.typ = self.typeMap[typ]
 
-    def visit_Assign(self, node):
+    def visit_Assign(self, node: ast.Assign):
         """
         @brief          Sets the targets's `typ` to the value's
         @param  node    Assign to be visited
@@ -75,14 +76,13 @@ class TypeInference(NodeVisitor):
         for t in node.targets:
             t.typ = typ
 
-    def visit_Name(self, node):
+    def visit_Name(self, node: ast.Name):
         """
         @brief          If the context is ast.Load, sets the node's typ to its
                         definition's.
                         If the context is an ast.Store, pass, as the type will
                         be set somewhere else
         @param  node    Name to be visited
-        FIXME: not finished
         """
         if isinstance(node.ctx, ast.Load):
             node.typ = node.definition.typ
@@ -96,4 +96,4 @@ class TypeInference(NodeVisitor):
         @brief          Sets the constant's type to the type of its value
         @param  node    Constant to be visited
         """
-        node.typ = type(node.value).__name__
+        node.typ = self.typeMap[type(node.value).__name__]
