@@ -3,6 +3,12 @@ from .visitor import NodeVisitor
 
 
 class Renamer(NodeVisitor):
+    """
+    @brief  Renamer class, changes information about the nodes in place. Chosen
+            format is `nodeName__X` where X is a static counter incremented at
+            each renaming
+    """
+
     counter = 0
 
     def __call__(self, ast):

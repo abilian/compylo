@@ -62,6 +62,13 @@ class Binder(NodeVisitor):
         self.visit(node.target)
         self.visit(node.value)
 
+    def visit_Assign(self, node: ast.Assign):
+        """
+        @brief          Visit the assign and binds every target
+        @param  node    Assign to be visited
+        """
+        self.visit_list(node.targets)
+
     def visit_Name(self, node):
         """
         @brief          If the context is ast.Load, check for the symbol in the
@@ -91,5 +98,7 @@ Currently supported nodes:
     - arg
     - Call
     - AnnAssign
+    - Assign
     - Name
+    - BinOp
 """
