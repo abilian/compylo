@@ -174,3 +174,23 @@ b ne sera pas bon, et on échouera au binding en essayant de re-parser l'output
 du pretty printer.
 Cela revient à faire quelque chose du genre:
 `compylo -BP toto.py > tata.py` && `compylo -B tata.py` sans avoir d'erreur
+
+#### Semaine du 20/11
+
+Le type-checker avance.
+Question: comment gérer les constructions suivantes ?
+```
+a : str = 5 * "a"
+```
+
+Envisager une passe de désucrage de ce genre de constructions ? (en utilisant
+ast.NodeTransformer pour le coup)
+Si oui, il faudrait le faire après l'inférence de type, mais avant le type
+checking. Ça permettrait de simplifier les problèmes de compatibilité entre les
+types.
+eg:
+    Sans désucrage, `5 + "A"` est invalide là où `5 * "A"` est valide.
+    Donc le checker de compatibilité (compatible_with dans src/types.py) aurait
+    un certain besoin de contexte.
+    Avec désucrage, on peut remplacer `5 * "A"` par `"AAAAA"` et supprimer le
+    BinOp
