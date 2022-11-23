@@ -6,7 +6,8 @@ class Int(metaclass=Singleton):
     @brief  Class for int type
     """
 
-    pass
+    def compatible_with(self, other):
+        return isinstance(other, Int)
 
 
 class Float(metaclass=Singleton):
@@ -14,7 +15,8 @@ class Float(metaclass=Singleton):
     @brief  Class for float type
     """
 
-    pass
+    def compatible_with(self, other):
+        return isinstance(other, Float)
 
 
 class Bool(metaclass=Singleton):
@@ -22,4 +24,5 @@ class Bool(metaclass=Singleton):
     @brief  Class for bool type
     """
 
-    pass
+    def compatible_with(self, other):
+        return isinstance(other, Bool)

@@ -43,7 +43,7 @@ class TypeInference(NodeVisitor):
         @param  node    arg to be visited
         """
         typ = node.annotation.id
-        node.typ = typ
+        node.typ = self.typeMap[typ]
 
     def visit_Call(self, node: ast.Call):
         """
@@ -51,6 +51,7 @@ class TypeInference(NodeVisitor):
         @param  node    Call to be visited
         """
         node.typ = node.definition.typ
+        self.visit_list(node.args)
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
         """

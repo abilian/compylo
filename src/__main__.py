@@ -1,4 +1,5 @@
 from .typeInference import TypeInference
+from .typeChecker import TypeChecker
 from .printer import Printer
 from .binder import Binder
 from .renamer import Renamer
@@ -26,6 +27,9 @@ def setup_parser():
         "-R", "--rename", help="rename the variables", action="store_true"
     )
     group.add_argument(
+        "-I", "--infer", help="infer types", action="store_true"
+    )
+    group.add_argument(
         "-T", "--type", help="compute types", action="store_true"
     )
 
@@ -37,7 +41,8 @@ def get_action(action: str):
         "print": Printer(),
         "bind": Binder(),
         "rename": Renamer(),
-        "type": TypeInference(),
+        "infer": TypeInference(),
+        "type": TypeChecker(),
     }
 
     return actionMap[action]
@@ -48,7 +53,8 @@ def dependencies(action: str, node: ast.AST):
         "print": [],
         "bind": [],
         "rename": ["bind"],
-        "type": ["rename"],
+        "infer": ["rename"],
+        "type": ["infer"],
     }
 
     if not dependenciesMap[action]:
@@ -65,6 +71,8 @@ def arg_action(args: argparse.Namespace):
         return "rename"
     if args.bind:
         return "bind"
+    if args.infer:
+        return "infer"
 
     return "type"
 
