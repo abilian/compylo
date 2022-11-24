@@ -35,3 +35,12 @@ class String(metaclass=Singleton):
 
     def compatible_with(self, other):
         return other == self
+
+
+class Void(metaclass=Singleton):
+    """
+    @brief  Class to emulate void type
+    """
+
+    def compatible_with(self, other):
+        return False

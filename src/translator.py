@@ -1,40 +1,25 @@
 from llvmlite import ir
+from .types import *
+from .visitor import NodeVisitor
 import ast
 
 
-class Translator:
-    def __init__(self, triple=None, trace=False):
-        self._trace = trace
+class Translator(NodeVisitor):
+    def __init__(self, triple=None):
         self._builder = ir.IRBuilder()
         self._module = ir.Module()
         self._module.triple = (
             triple if triple is not None else "x86_64-unknown-linux-gnu"
         )
-        self._functionMap = {}
+        self._functionMap = {}  # FIXME: still useful ?
         self._currentFunction = None
         self._typesMap = {
-            "int": ir.IntType(64),
-            "float": ir.DoubleType(),
-            "None": ir.VoidType()
+            Int: ir.IntType(64),
+            Float: ir.DoubleType(),
+            Bool: ir.IntType(1),
+            Void: ir.VoidType()
             # str: ir.ArrayType(X * i8) how ?
         }
-
-    def visit(self, node):
-        t = type(node).__name__
-        if t[0].islower():
-            t = t[0].upper() + t[1:]
-
-        name = "visit" + t
-        fct = getattr(self, name)
-
-        if self._trace:
-            print(f"Visiting {t}")
-
-        return fct(node)
-
-    def visitModule(self, node):
-        for n in node.body:
-            self.visit(n)
 
     def _visitFunctionBody(self, node):
         func = self._functionMap[node.name]
@@ -59,7 +44,7 @@ class Translator:
 
     def _createFunctionType(self, node):
         # FIXME: bancal ?
-        retType = self._typesMap[node.returns.id]
+        retType = self._typesMap[node.typ]
         argsType = []
 
         for a in node.args.args:
@@ -69,19 +54,34 @@ class Translator:
         func = ir.Function(self._module, ftype, name=node.name)
         self._functionMap[node.name] = func
 
-    def visitFunctionDef(self, node):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
+        """
+        @brief
+        @param  node    FunctionDef to be visited
+        """
         self._createFunctionType(node)
         self._visitFunctionBody(node)
 
-    def visitReturn(self, node):
+    def visit_Return(self, node: ast.Return):
+        """
+        @brief
+        @param  node    Return to be visited
+        """
         self._builder.ret(self.visit(node.value))
 
-    def visitConstant(self, node):
+    def visit_Constant(self, node):
+        """
+        @brief          Creates a constant using the node's typ and value.
+        @param  node    Constant to be visited
+        """
         # create a constant.
-        typ = self._typesMap[str(type(node.value).__name__)]
-        return ir.Constant(typ, node.value)
+        return ir.Constant(node.typ, node.value)
 
     def visitName(self, node):
+        """
+        @brief
+        @param  node    Name to be visited
+        """
         # create a store, load or smth instruction depending on node.ctx
         pass
 
@@ -93,27 +93,7 @@ class Translator:
             Mult()      -> _builder.mul
             Div()       -> _builder.fdiv
             FloorDiv()  -> _builder.sdiv
+        @brief
+        @param  node    BinOp to be visited
         """
         pass
-
-
-if __name__ == "__main__":
-    with open("./toto.py") as f:
-        content = f.read()
-
-    root = ast.parse(content)
-    t = Translator(trace=True)
-    t.visit(root)
-    module = t._module
-    builder = t._builder
-
-    ftype = ir.FunctionType(ir.IntType(64), [])
-    main = ir.Function(module, ftype, name="main")
-    bb = main.append_basic_block()
-
-    builder.position_at_end(bb)
-    ret = builder.call(t._functionMap["func"], [])
-
-    builder.ret(ret)
-
-    print(module)
