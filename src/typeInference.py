@@ -1,6 +1,6 @@
 from .errors import UnknownTypeError
 from .visitor import NodeVisitor
-from .types import Int, Float, Bool
+from .types import Int, Float, Bool, String
 import ast
 
 
@@ -10,7 +10,12 @@ class TypeInference(NodeVisitor):
     """
 
     def __init__(self):
-        self.typeMap = {"int": Int, "str": None, "float": Float, "bool": Bool}
+        self.typeMap = {
+            "int": Int,
+            "str": String,
+            "float": Float,
+            "bool": Bool,
+        }
 
     def __call__(self, node):
         self.visit(node)

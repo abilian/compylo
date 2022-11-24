@@ -1,6 +1,7 @@
 import ast
 from .visitor import NodeVisitor
 from .errors import IncompatibleTypeError
+from .types import *
 
 
 class TypeChecker(NodeVisitor):
@@ -12,7 +13,7 @@ class TypeChecker(NodeVisitor):
         self.visit(node)
 
     def __checkType(self, t1, t2):
-        if t1 != t2:
+        if not t1.compatible_with(t1, t2):
             raise IncompatibleTypeError(t1, t2)
 
     def visit_Call(self, node: ast.Call):

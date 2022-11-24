@@ -7,7 +7,7 @@ class Int(metaclass=Singleton):
     """
 
     def compatible_with(self, other):
-        return isinstance(other, Int)
+        return other == self
 
 
 class Float(metaclass=Singleton):
@@ -16,7 +16,7 @@ class Float(metaclass=Singleton):
     """
 
     def compatible_with(self, other):
-        return isinstance(other, Float)
+        return other == self
 
 
 class Bool(metaclass=Singleton):
@@ -25,4 +25,13 @@ class Bool(metaclass=Singleton):
     """
 
     def compatible_with(self, other):
-        return isinstance(other, Bool)
+        return other == self
+
+
+class String(metaclass=Singleton):
+    """
+    @bref   Class for String type
+    """
+
+    def compatible_with(self, other):
+        return other == self
