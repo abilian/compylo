@@ -194,3 +194,14 @@ eg:
     un certain besoin de contexte.
     Avec désucrage, on peut remplacer `5 * "A"` par `"AAAAA"` et supprimer le
     BinOp
+
+#### Semaine du 5/12
+
+Est-ce que c'est vraiment judicieux de faire 2 visiteurs séparés pour les types
+?
+TODO:
+    - Ajouter les binOp dans le translator
+    - Ajouter les unaryOp
+    - Créer un Docker de développement avec le wasm, nix est trop cancer à ce
+      niveau là
+    - Trouver un truc pour la runtime
