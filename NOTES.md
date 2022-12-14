@@ -205,3 +205,8 @@ TODO:
     - Créer un Docker de développement avec le wasm, nix est trop cancer à ce
       niveau là
     - Trouver un truc pour la runtime
+
+#### Semaine du 12/12
+
+Création du Docker pour utiliser WASI.
+Problème: wasi ne supporte que les bout de code avec un main
