@@ -113,4 +113,7 @@ class TypeInference(NodeVisitor):
         self.visit(node.left)
         self.visit(node.right)
 
-        node.typ = node.left.typ
+        if isinstance(node.op, ast.FloorDiv):
+            node.typ = Float
+        else:
+            node.typ = node.left.typ
