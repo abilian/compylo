@@ -28,7 +28,7 @@ class TypeInference(NodeVisitor):
 
     def __update_Node(self, node, typ):
         if self.__exists(typ):
-            node.typ = typ
+            node.typ = self.typeMap[typ]
         else:
             raise UnknownTypeError(typ)
 
@@ -103,3 +103,14 @@ class TypeInference(NodeVisitor):
         @param  node    Constant to be visited
         """
         node.typ = self.typeMap[type(node.value).__name__]
+
+    def visit_BinOp(self, node: ast.BinOp):
+        """
+        @brief          Sets the BinOp's type to the one of its left value
+                        (arbitrary)
+        @param  node    BinOp to be visited
+        """
+        self.visit(node.left)
+        self.visit(node.right)
+
+        node.typ = node.left.typ

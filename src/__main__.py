@@ -4,6 +4,7 @@ from .printer import Printer
 from .binder import Binder
 from .renamer import Renamer
 from .errors import *
+from .translator import Translator
 import argparse
 import sys, ast, traceback
 
@@ -32,6 +33,12 @@ def setup_parser():
     group.add_argument(
         "-T", "--type", help="compute types", action="store_true"
     )
+    group.add_argument(
+        "-L",
+        "--llvm-compute",
+        help="creates a .ll file with the llvm IR corresponding",
+        action="store_true",
+    )
 
     return parser
 
@@ -43,6 +50,7 @@ def get_action(action: str):
         "rename": Renamer(),
         "infer": TypeInference(),
         "type": TypeChecker(),
+        "llvm-compute": Translator("wasm32-unknown-wasi"),
     }
 
     return actionMap[action]
@@ -50,18 +58,18 @@ def get_action(action: str):
 
 def dependencies(action: str, node: ast.AST):
     dependenciesMap = {
-        "print": [],
-        "bind": [],
-        "rename": ["bind"],
-        "infer": ["rename"],
-        "type": ["infer"],
+        "print": None,
+        "bind": None,
+        "rename": "bind",
+        "infer": "rename",
+        "type": "infer",
+        "llvm-compute": "type",
     }
 
     if not dependenciesMap[action]:
         return get_action(action)(node)
 
-    dependencies(dependenciesMap[action][0], node)
-    # FIXME: with this approach, flags can only have 1 dep
+    dependencies(dependenciesMap[action], node)
 
     return get_action(action)(node)
 
@@ -73,8 +81,10 @@ def arg_action(args: argparse.Namespace):
         return "bind"
     if args.infer:
         return "infer"
+    if args.type:
+        return "type"
 
-    return "type"
+    return "llvm-compute"
 
 
 def main():

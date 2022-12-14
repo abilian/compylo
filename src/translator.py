@@ -7,8 +7,8 @@ import ast
 class Translator(NodeVisitor):
     def __init__(self, triple=None):
         self._builder = ir.IRBuilder()
-        self._module = ir.Module()
-        self._module.triple = (
+        self.module = ir.Module()
+        self.module.triple = (
             triple if triple is not None else "x86_64-unknown-linux-gnu"
         )
         self._functionMap = {}  # FIXME: still useful ?
@@ -20,6 +20,10 @@ class Translator(NodeVisitor):
             Void: ir.VoidType()
             # str: ir.ArrayType(X * i8) how ?
         }
+
+    def __call__(self, node):
+        self.visit(node)
+        print(self.module)
 
     def _visitFunctionBody(self, node):
         func = self._functionMap[node.name]
@@ -51,7 +55,7 @@ class Translator(NodeVisitor):
             argsType.append(self._typesMap[a.annotation.id])
 
         ftype = ir.FunctionType(retType, argsType)
-        func = ir.Function(self._module, ftype, name=node.name)
+        func = ir.Function(self.module, ftype, name=node.name)
         self._functionMap[node.name] = func
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
@@ -75,7 +79,7 @@ class Translator(NodeVisitor):
         @param  node    Constant to be visited
         """
         # create a constant.
-        return ir.Constant(node.typ, node.value)
+        return ir.Constant(self._typesMap[node.typ], node.value)
 
     def visitName(self, node):
         """
