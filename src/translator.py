@@ -46,10 +46,7 @@ class Translator(NodeVisitor):
 
     def _createFunctionType(self, node):
         retType = self._typesMap[node.typ]
-        # argsType = [self._typesMap[a.annotation.id] for a in node.args.args]
-        argsType = []
-        for a in node.args.args:
-            argsType.append(self._typesMap[a.typ])
+        argsType = [self._typesMap[a.typ] for a in node.args.args]
 
         # FIXME: check for return type, might be void
 
@@ -98,7 +95,7 @@ class Translator(NodeVisitor):
 
     def visit_Name(self, node):
         """
-        @brief
+        @brief          Generates a load or an alloca depending on the context
         @param  node    Name to be visited
         """
         # create a store, load or smth instruction depending on node.ctx
@@ -108,6 +105,29 @@ class Translator(NodeVisitor):
             return self._newAlloca(node, node.id)
         else:
             raise NotImplementedError("del operator not yet implemented")
+
+    def visit_Assign(self, node: ast.Assign):
+        """
+        @brief          Creates the allocas and the store of the value for each
+                        target
+        @param  node    Assign to be visited
+        """
+        value = self.visit(node.value)
+        self.visit_list(node.targets)  # creating the allocas
+
+        stores = [
+            self._builder.store(value, self._allocated[n.id])
+            for n in node.targets
+        ]
+
+        return stores[-1]
+
+    def visit_AnnAssign(self, node: ast.AnnAssign):
+        """
+        @brief
+        @param  node    AnnAssign to be visited
+        """
+        pass
 
     def visit_BinOp(self, node):
         """
