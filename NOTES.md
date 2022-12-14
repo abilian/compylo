@@ -210,3 +210,11 @@ TODO:
 
 Création du Docker pour utiliser WASI.
 Problème: wasi ne supporte que les bout de code avec un main
+
+Nouveaux problèmes:
+    - l'IR LLVM ne supporte pas les fonctions nested -> nécessité d'implémenter du
+        lambda lifting
+    - Pour le moment, le LLVM généré à un pb: si le programme commence par une
+      fonction, il ne ressort pas de la fonction.
+      Si le programme ne commence pas par une fonction, il n'y a pas de point
+      d'entrée...
