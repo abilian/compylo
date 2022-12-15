@@ -75,3 +75,53 @@ class Printer(NodeVisitor):
 
     def visit_Name(self, node: ast.Name):
         self.__printWithDef(node.id, node)
+
+    def visit_If(self, node: ast.If):
+        self.__print("if ")
+        self.visit(node.test)
+        self.__incrIndent()
+        self.visit_list(node.body)
+        self.__decrIndent()
+
+    def visit_Compare(self, node: ast.Compare):
+        self.visit(node.left)
+        for op in node.ops:
+            match type(op):
+                case ast.Eq:
+                    self.__print(" == ")
+                case ast.NotEq:
+                    self.__print(" != ")
+                case ast.Gt:
+                    self.__print(" > ")
+                case ast.GtE:
+                    self.__print(" >= ")
+                case ast.Lt:
+                    self.__print(" < ")
+                case ast.LtE:
+                    self.__print(" <= ")
+
+        self.visit_list(node.comparators)
+        print(":")
+
+    def visit_BinOp(self, node: ast.BinOp):
+        self.visit(node.left)
+        match type(node.op):
+            case ast.Add:
+                self.__print(" + ")
+            case ast.Sub:
+                self.__print(" - ")
+            case ast.Mult:
+                self.__print(" * ")
+            case ast.Div:
+                self.__print(" / ")
+            case ast.FloorDiv:
+                self.__print(" // ")
+        self.visit(node.right)
+
+    def visit_UnaryOp(self, node: ast.UnaryOp):
+        match type(node.op):
+            case ast.USub:
+                self.__print("-")
+            case ast.UAdd:
+                self.__print("+")
+        self.visit(node.operand)
