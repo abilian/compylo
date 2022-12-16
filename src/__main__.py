@@ -5,6 +5,7 @@ from .binder import Binder
 from .renamer import Renamer
 from .errors import *
 from .translator import Translator
+from .desugar import DesugarVisitor
 import argparse
 import sys, ast, traceback
 
@@ -34,6 +35,9 @@ def setup_parser():
         "-T", "--type", help="compute types", action="store_true"
     )
     group.add_argument(
+        "-D", "--desugar", help="desugars the ast", action="store_true"
+    )
+    group.add_argument(
         "-L",
         "--llvm-compute",
         help="creates a .ll file with the llvm IR corresponding",
@@ -50,6 +54,7 @@ def get_action(action: str):
         "rename": Renamer(),
         "infer": TypeInference(),
         "type": TypeChecker(),
+        "desugar": DesugarVisitor(),
         "llvm-compute": Translator("wasm32-unknown-wasi"),
     }
 
@@ -63,7 +68,8 @@ def dependencies(action: str, node: ast.AST):
         "rename": "bind",
         "infer": "rename",
         "type": "infer",
-        "llvm-compute": "type",
+        "desugar": "type",
+        "llvm-compute": "desugar",
     }
 
     if not dependenciesMap[action]:
@@ -83,6 +89,8 @@ def arg_action(args: argparse.Namespace):
         return "infer"
     if args.type:
         return "type"
+    if args.desugar:
+        return "desugar"
 
     return "llvm-compute"
 

@@ -1,16 +1,37 @@
 import ast
+from .types import String, Int
 from .visitor import NodeTransformer
+from .binder import Binder
+from .typeChecker import TypeChecker
+from .typeInference import TypeInference
 
 
 class DesugarVisitor(NodeTransformer):
     def __call__(self, node):
-        self.visit(node)
+        n = self.visit(node)
+        Binder()(n)
+        TypeInference()(n)
+        TypeChecker()(n)
+        return n
 
     def visit_BinOp(self, node):
-        pass
+        if type(node.op) != ast.Mult:
+            return node
+
+        match (node.left.typ, node.right.typ):
+            case (String, Int) | (Int, String):
+                st = node.right if node.right.typ == String else node.left
+                num = node.right if node.right.typ == Int else node.left
+                # FIXME: st/num can also be Subscript, Name, Function...
+                if type(st) == ast.Constant and type(num) == ast.Constant:
+                    return ast.Constant(st.value * num.value)
+                else:
+                    return node
+            case _:
+                return node
 
     def visit_Compare(self, node):
-        pass
+        return node
 
     def visit_UnaryOp(self, node):
         """
