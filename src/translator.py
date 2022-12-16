@@ -16,8 +16,8 @@ class Translator(NodeVisitor):
             Int: ir.IntType(64),
             Float: ir.DoubleType(),
             Bool: ir.IntType(1),
-            Void: ir.VoidType()
-            # str: ir.ArrayType(X * i8) how ?
+            Void: ir.VoidType(),
+            String: ir.IntType(8).as_pointer(),
         }
         self._allocated = {}
 
@@ -124,11 +124,14 @@ class Translator(NodeVisitor):
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
         """
-        @brief
+        @brief          Generates an alloca and a store for the variable
         @param  node    AnnAssign to be visited
         """
         value = self.visit(node.value)
-        self.visit(node.target)
+
+        if not self._allocated[node.target.id]:
+            self.visit(node.target)
+
         return self._builder.store(value, self._allocated[node.target.id])
 
     def visit_BinOp(self, node):
@@ -140,27 +143,17 @@ class Translator(NodeVisitor):
         assert node.left.typ == Int
         assert node.right.typ == Int
 
-        match type(node.op):
-            case ast.Add:
-                return self._builder.add(
-                    self.visit(node.left), self.visit(node.right)
-                )
-            case ast.Sub:
-                return self._builder.sub(
-                    self.visit(node.left), self.visit(node.right)
-                )
-            case ast.Mult:
-                return self._builder.mul(
-                    self.visit(node.left), self.visit(node.right)
-                )
-            case ast.Div:
-                return self._builder.fdiv(
-                    self.visit(node.left), self.visit(node.right)
-                )
-            case ast.FloorDiv:
-                return self._builder.sdiv(
-                    self.visit(node.left), self.visit(node.right)
-                )
+        funMap = {
+            ast.Add: self._builder.add,
+            ast.Sub: self._builder.sub,
+            ast.Mult: self._builder.mul,
+            ast.Div: self._builder.fdiv,
+            ast.FloorDiv: self._builder.sdiv,
+        }
+
+        return funMap[type(node.op)](
+            self.visit(node.left), self.visit(node.right)
+        )
 
     def visit_If(self, node: ast.If):
         """
