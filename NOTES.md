@@ -226,3 +226,5 @@ Le NodeTransformer peut faire l'affaire pour ça.
 Comment handle les comparaisons "complexes" autorisées en Python ?
 Comme `a > b > 0`
 Faut-il les désucrer aussi ?
+
+Après un test à  main, un fibo marche
