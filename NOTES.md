@@ -218,3 +218,11 @@ Nouveaux problèmes:
       fonction, il ne ressort pas de la fonction.
       Si le programme ne commence pas par une fonction, il n'y a pas de point
       d'entrée...
+
+Faire une passe de désucrage paraît pas mal.
+Par exemple transformer les -5 en 0-5, les 5 * "a" en "aaaaa".
+Le NodeTransformer peut faire l'affaire pour ça.
+
+Comment handle les comparaisons "complexes" autorisées en Python ?
+Comme `a > b > 0`
+Faut-il les désucrer aussi ?
