@@ -127,7 +127,9 @@ class Translator(NodeVisitor):
         @brief
         @param  node    AnnAssign to be visited
         """
-        pass
+        value = self.visit(node.value)
+        self.visit(node.target)
+        return self._builder.store(value, self._allocated[node.target.id])
 
     def visit_BinOp(self, node):
         """
@@ -159,3 +161,43 @@ class Translator(NodeVisitor):
                 return self._builder.sdiv(
                     self.visit(node.left), self.visit(node.right)
                 )
+
+    def visit_If(self, node: ast.If):
+        """
+        @brief          Creates the basic blocks corresponding to an If
+                        statement
+        @param  node    If to be visited
+        """
+        pred = self.visit(node.test)
+        if node.orelse != []:  # if there is an else statement
+            with self._builder.if_else(pred) as (then, otherwise):
+                with then:
+                    self.visit_list(node.body)
+                with otherwise:
+                    self.visit_list(node.orelse)
+        else:
+            with self._builder.if_then(pred):
+                self.visit_list(node.body)
+
+    def visit_Compare(self, node: ast.Compare):
+        """
+        @brief          Creates the instruction for comparison
+        @param  node    Compare to be visited
+        """
+        assert len(node.ops) == 1  # FIXME: handle multiple comparisons ?
+
+        opMap = {
+            ast.Eq: "==",
+            ast.NotEq: "!=",
+            ast.Gt: ">",
+            ast.GtE: ">=",
+            ast.Lt: "<",
+            ast.LtE: "<=",
+        }
+        op = node.ops[0]
+
+        return self._builder.icmp_signed(
+            opMap[type(op)],
+            self.visit(node.left),
+            self.visit(node.comparators[0]),
+        )
