@@ -117,3 +117,7 @@ class TypeInference(NodeVisitor):
             node.typ = Float
         else:
             node.typ = node.left.typ
+
+    def visit_UnaryOp(self, node: ast.UnaryOp):
+        self.visit(node.operand)
+        node.typ = node.operand.typ

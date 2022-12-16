@@ -46,5 +46,11 @@ class TypeChecker(NodeVisitor):
                         BinOp
         @param  node    BinOp to be visited
         """
+        if isinstance(node.op, ast.Mult):
+            if (node.left.typ, node.right.typ) == (String, Int) or (
+                node.left.typ,
+                node.right.typ,
+            ) == (Int, String):
+                return
 
         self.__checkType(node.left.typ, node.right.typ)
