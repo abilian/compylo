@@ -5,4 +5,8 @@
 tests/*.yaml
 *.egg-info
 
+.fleet
+.pytest_cache
+.ruff_cache
+
 __pycache__/

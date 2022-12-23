@@ -25,7 +25,7 @@ class Printer(NodeVisitor):
     def __call__(self, node: ast.AST) -> None:
         self.visit(node)
 
-    def visit_FunctionDef(self, node):
+    def visit_FunctionDef(self, node: ast.FunctionDef):
         s: str = (Printer.Indent * " ") + f"def {node.name}"
         self.__printWithDef(s, node)
         self.__print("(")
@@ -44,7 +44,7 @@ class Printer(NodeVisitor):
             self.__print(f" : {node.annotation.id}")
         self.__print(" ")
 
-    def visit_Return(self, node):
+    def visit_Return(self, node: ast.Return):
         s: str = Printer.Indent * " "
         self.__print(s + "return ")
         self.visit(node.value)
