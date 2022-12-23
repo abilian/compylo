@@ -1,7 +1,8 @@
-from .errors import UnknownTypeError
-from .visitor import NodeVisitor
-from .types import Int, Float, Bool, String
 import ast
+
+from .errors import UnknownTypeError
+from .types import Bool, Float, Int, String
+from .visitor import NodeVisitor
 
 
 class TypeInference(NodeVisitor):
@@ -24,7 +25,7 @@ class TypeInference(NodeVisitor):
         """
         Checks if the type `typ` exists
         """
-        return typ in self.typeMap.keys()
+        return typ in self.typeMap
 
     def __update_Node(self, node, typ):
         if self.__exists(typ):

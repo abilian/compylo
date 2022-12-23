@@ -1,13 +1,16 @@
-from .typeInference import TypeInference
-from .typeChecker import TypeChecker
-from .printer import Printer
-from .binder import Binder
-from .renamer import Renamer
-from .errors import *
-from .translator import Translator
-from .desugar import DesugarVisitor
 import argparse
-import sys, ast, traceback
+import ast
+import sys
+import traceback
+
+from .binder import Binder
+from .desugar import DesugarVisitor
+from .errors import *
+from .printer import Printer
+from .renamer import Renamer
+from .translator import Translator
+from .typeChecker import TypeChecker
+from .typeInference import TypeInference
 
 
 def setup_parser():

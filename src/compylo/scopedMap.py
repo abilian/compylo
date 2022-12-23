@@ -1,5 +1,4 @@
 from .symbol import *
-from typing import List, Dict
 
 
 class ScopedMap:
@@ -9,9 +8,9 @@ class ScopedMap:
     """
 
     def __init__(self):
-        self.symbols: Dict[Symbol, List[Symbol]] = {Symbol("global"): []}
+        self.symbols: dict[Symbol, list[Symbol]] = {Symbol("global"): []}
         self.current: Symbol = Symbol("global")
-        self.old: List[Symbol] = []
+        self.old: list[Symbol] = []
 
     def __str__(self):
         """
@@ -59,7 +58,7 @@ class ScopedMap:
             self.current = self.old[-1]
             self.old.pop()
 
-    def __move(self, old: List[Symbol], looking: str):
+    def __move(self, old: list[Symbol], looking: str):
         for scope in self.symbols:
             for sym in self.symbols[scope]:
                 if sym.name == looking:
@@ -98,7 +97,7 @@ class ScopedMap:
         Finds a symbol with a given name in the table.
         Returns None if not found
         """
-        toSearch: List[Symbol] = [
+        toSearch: list[Symbol] = [
             self.current
         ]  # Scopes where the variable can be found
         if not current:
@@ -115,4 +114,4 @@ class ScopedMap:
         """
         Checks if a symbol exists in a table, using find
         """
-        return self.find(sym, current) != None
+        return self.find(sym, current) is not None

@@ -1,7 +1,9 @@
+import ast
+
 from llvmlite import ir
+
 from .types import *
 from .visitor import NodeVisitor
-import ast
 
 
 class Translator(NodeVisitor):

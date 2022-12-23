@@ -1,8 +1,9 @@
+import ast
+
+from .errors import UnknownSymbolError
 from .scopedMap import ScopedMap
 from .symbol import Symbol
 from .visitor import NodeVisitor
-from .errors import UnknownSymbolError
-import ast
 
 
 class Binder(NodeVisitor):

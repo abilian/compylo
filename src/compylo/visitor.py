@@ -1,4 +1,5 @@
-from ast import NodeVisitor as Visitor, NodeTransformer as Transformer
+from ast import NodeTransformer as Transformer
+from ast import NodeVisitor as Visitor
 
 
 class NodeVisitor(Visitor):

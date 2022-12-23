@@ -1,7 +1,8 @@
 import ast
-from .visitor import NodeVisitor
+
 from .errors import IncompatibleTypeError
 from .types import *
+from .visitor import NodeVisitor
 
 
 class TypeChecker(NodeVisitor):

@@ -1,9 +1,10 @@
 import ast
-from .types import String, Int
-from .visitor import NodeTransformer
+
 from .binder import Binder
 from .typeChecker import TypeChecker
 from .typeInference import TypeInference
+from .types import Int, String
+from .visitor import NodeTransformer
 
 
 class DesugarVisitor(NodeTransformer):
