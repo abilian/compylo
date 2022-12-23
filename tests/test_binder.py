@@ -15,7 +15,6 @@ def list_dir(dir):
 @pytest.mark.parametrize("file", list_dir("good"))
 def test_binder_good(file):
     out = get_printer_output(file)
-    assert b"Binder" in out
     root = ast.parse(out)
     binder.Binder()(root)
     # TODO: check that the binder worked
@@ -24,7 +23,6 @@ def test_binder_good(file):
 @pytest.mark.parametrize("file", list_dir("bind"))
 def test_binder_bad(file):
     out = get_printer_output(file)
-    assert b"Binder" in out
     root = ast.parse(out)
     binder.Binder()(root)
     # TODO: check that something failed
