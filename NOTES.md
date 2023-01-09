@@ -199,6 +199,8 @@ eg:
 
 Est-ce que c'est vraiment judicieux de faire 2 visiteurs séparés pour les types
 ?
+typeInference et typeCheck peuvent être facto en un seul visiteur. Par contre
+c'est moins verbeux et + difficile à comprendre
 TODO:
     - Ajouter les binOp dans le translator
     - Ajouter les unaryOp
@@ -226,5 +228,24 @@ Le NodeTransformer peut faire l'affaire pour ça.
 Comment handle les comparaisons "complexes" autorisées en Python ?
 Comme `a > b > 0`
 Faut-il les désucrer aussi ?
+Réponse: oui
+
+Et pour les assignations multiples ? `a = b = 3`
+Oui aussi
 
 Après un test à  main, un fibo marche
+
+#### Semaine du 20/12
+
+##### Call du 22/12
+
+Pas le temps de finir
+Objectif: atteindre un truc utilisable au moins dans certains cas.
+
+Ajouter les boucles. (Gérer les AugAssign)
+
+Question du main:
+    Le scope global est le main.
+    Ça implique de calculer les escape et d'implem le lambda lifting
+
+Voir pour les listes

@@ -38,7 +38,6 @@ class Translator(NodeVisitor):
 
         entry = func.append_basic_block()  # function basic block
         self._builder.position_at_end(entry)  # start at end of basic block
-        # TODO: - create alloca/store for each arg
         self.visit_list(node.args.args)
 
         # visit the body
@@ -179,7 +178,7 @@ class Translator(NodeVisitor):
         @brief          Creates the instruction for comparison
         @param  node    Compare to be visited
         """
-        assert len(node.ops) == 1  # FIXME: handle multiple comparisons ?
+        assert len(node.ops) == 1
 
         opMap = {
             ast.Eq: "==",
