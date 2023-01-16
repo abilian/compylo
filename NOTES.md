@@ -249,3 +249,5 @@ Question du main:
     Ça implique de calculer les escape et d'implem le lambda lifting
 
 Voir pour les listes
+
+#### Semaine du 16/01

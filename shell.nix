@@ -6,6 +6,8 @@ let
     black
     pyyaml
     termcolor
+    poetry
+    pytest
   ]);
 in
 pkgs.mkShell {
@@ -16,5 +18,6 @@ pkgs.mkShell {
     llvmPackages_14.llvm
     llvmPackages_14.bintools
     clang_14
+    #ruff
   ];
 }
