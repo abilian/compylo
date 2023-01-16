@@ -15,6 +15,9 @@ class Printer(NodeVisitor):
     def __decrIndent(self):
         Printer.Indent -= 4
 
+    def __printIndent(self, s=""):
+        self.__print(Printer.Indent * " " + s)
+
     def __printWithDef(self, toPrint: str, node: ast.AST):
         self.__print(toPrint)
         if hasattr(node, "definition"):
@@ -23,12 +26,15 @@ class Printer(NodeVisitor):
     def __print(self, s: str):
         print(s, end="")
 
-    def __call__(self, node: ast.AST) -> None:
-        self.visit(node)
+    def visit_list(self, l):
+        for instr in l:
+            self.__printIndent()
+            self.visit(instr)
+            print()
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
-        s: str = (Printer.Indent * " ") + f"def {node.name}"
-        self.__printWithDef(s, node)
+        self.__printIndent(f"def {node.name}")
+        self.__printWithDef("", node)
         self.__print("(")
 
         self.visit(node.args)
@@ -46,8 +52,7 @@ class Printer(NodeVisitor):
         self.__print(" ")
 
     def visit_Return(self, node: ast.Return):
-        s: str = Printer.Indent * " "
-        self.__print(s + "return ")
+        self.__print("return ")
         self.visit(node.value)
         print()
 
@@ -70,6 +75,13 @@ class Printer(NodeVisitor):
         self.__print(" = ")
         self.visit(node.value)
         print()
+
+    def visit_Assign(self, node: ast.Assign):
+        for t in node.targets:
+            self.visit(t)
+            self.__print(" = ")
+
+        self.visit(node.value)
 
     def visit_Constant(self, node: ast.Constant):
         self.__print(node.value)
