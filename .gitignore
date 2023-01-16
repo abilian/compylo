@@ -1,5 +1,5 @@
 *.*.swp
-.envrc
+.direnv/
 *toto*
 *.ll
 tests/*.yaml
