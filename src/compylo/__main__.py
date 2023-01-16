@@ -5,7 +5,7 @@ import traceback
 
 from .binder import Binder
 from .desugar import DesugarVisitor
-from .errors import *
+from .errors import BindError, TypeCheckError
 from .printer import Printer
 from .renamer import Renamer
 from .translator import Translator

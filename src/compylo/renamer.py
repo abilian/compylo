@@ -12,9 +12,6 @@ class Renamer(NodeVisitor):
 
     counter = 0
 
-    def __call__(self, ast):
-        self.visit(ast)
-
     def __gen_Name(self, name: str):
         res = f"{name}__{Renamer.counter}"
         Renamer.counter += 1

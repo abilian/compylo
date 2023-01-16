@@ -2,7 +2,7 @@ import ast
 
 from llvmlite import ir
 
-from .types import *
+from .types import Int, Float, Bool, String, Void
 from .visitor import NodeVisitor
 
 

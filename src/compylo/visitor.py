@@ -3,12 +3,15 @@ from ast import NodeVisitor as Visitor
 
 
 class NodeVisitor(Visitor):
-    def visit_list(self, l):
-        for instr in l:
+    def __call__(self, node):
+        self.visit(node)
+
+    def visit_list(self, li):
+        for instr in li:
             self.visit(instr)
 
 
 class NodeTransformer(Transformer):
-    def visit_list(self, l):
-        for instr in l:
+    def visit_list(self, li):
+        for instr in li:
             self.visit(instr)

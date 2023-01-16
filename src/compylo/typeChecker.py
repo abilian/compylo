@@ -1,7 +1,7 @@
 import ast
 
 from .errors import IncompatibleTypeError
-from .types import *
+from .types import Int, String
 from .visitor import NodeVisitor
 
 
@@ -9,9 +9,6 @@ class TypeChecker(NodeVisitor):
     """
     @brief Visitor that checks if the operations on types are logicals
     """
-
-    def __call__(self, node):
-        self.visit(node)
 
     def __checkType(self, t1, t2):
         if not t1.compatible_with(t1, t2):
@@ -27,11 +24,10 @@ class TypeChecker(NodeVisitor):
         expectedArgs = node.definition.args.args
         gottenArgs = node.args
 
-        l = len(expectedArgs)
-        assert l == len(gottenArgs)
+        assert len(expectedArgs) == len(gottenArgs)
 
         # Check arguments
-        for i in range(l):
+        for i in range(len(expectedArgs)):
             self.__checkType(expectedArgs[i].typ, gottenArgs[i].typ)
 
     def visit_AnnAssign(self, node: ast.AnnAssign):

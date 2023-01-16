@@ -1,4 +1,4 @@
-from .symbol import *
+from .symbol import Symbol
 
 
 class ScopedMap:
@@ -70,9 +70,7 @@ class ScopedMap:
         Moves the 'current' scope to a given one, updating 'self.old' as if we
         were creating the scope.
         """
-        if scope in list(
-            map(lambda s: s.name, self.old)
-        ):  # If we're going back to an 'old' scope
+        if scope in [(s.name, self.old) for s in scope]:
             while self.old.pop().name != scope:
                 continue
         else:
