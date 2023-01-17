@@ -242,7 +242,9 @@ Après un test à  main, un fibo marche
 Pas le temps de finir
 Objectif: atteindre un truc utilisable au moins dans certains cas.
 
-Ajouter les boucles. (Gérer les AugAssign)
+Ajouter les boucles:
+    - Gérer les AugAssign (désucrés)
+    - Ajouter les booléens
 
 Question du main:
     Le scope global est le main.

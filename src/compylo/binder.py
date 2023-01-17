@@ -1,6 +1,6 @@
 import ast
 
-from .errors import UnknownSymbolError
+from .errors import UnknownSymbolError, StatementOutOfLoopError
 from .scopedMap import ScopedMap
 from .symbol import Symbol
 from .visitor import NodeVisitor
@@ -12,7 +12,8 @@ class Binder(NodeVisitor):
     """
 
     def __init__(self):
-        self.map = ScopedMap()
+        self.map = ScopedMap() # Scope
+        self.loop = None # Loop we're curently in (needed for break and continue)
 
     def __call__(self, node):
         self.visit(node)
@@ -84,15 +85,38 @@ class Binder(NodeVisitor):
         else:
             raise NotImplementedError("del instruction not yet implemented")
 
+    def visit_While(self, node: ast.While):
+        """
+        @brief          Sets self.loop properly
+        @param  node    While to be visited
+        """
+        node.definition = node
 
-"""
-Currently supported nodes:
-    - FunctionDef
-    - argument
-    - arg
-    - Call
-    - AnnAssign
-    - Assign
-    - Name
-    - BinOp
-"""
+        save = self.loop
+        self.loop = node
+
+        self.visit(node.test)
+        self.visit_list(node.body)
+        self.visit_list(node.orelse)
+
+        self.loop = save
+
+    def visit_Continue(self, node: ast.Continue):
+        """
+        @brief          Sets definition
+        @param  node    ast.Continue to be played
+        """
+        if self.loop is None:
+            raise StatementOutOfLoopError("while")
+
+        node.definition = self.loop
+
+    def visit_Break(self, node: ast.Break):
+        """
+        @brief          Sets definition
+        @param  node    ast.Break to be played
+        """
+        if self.loop is None:
+            raise StatementOutOfLoopError("break")
+
+        node.definition = self.loop

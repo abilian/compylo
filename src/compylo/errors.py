@@ -14,6 +14,12 @@ class UnknownSymbolError(BindError):
         else:
             self.message = message
 
+class StatementOutOfLoopError(BindError):
+    def __init__(self, type="", message=None):
+        if message is None:
+            self.message = f"Statement {type} is out of a loop"
+        else:
+            self.message = message
 
 class UnknownTypeError(TypeCheckError):
     def __init__(self, typ, message=None):
