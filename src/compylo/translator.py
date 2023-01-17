@@ -138,6 +138,11 @@ class Translator(NodeVisitor):
             for n in node.targets
         ]
 
+        #stores = []
+        #for n in node.targets:
+        #    val = self._builder.store(value, self._allocated[n.id])
+        #    stores.append(val)
+
         return stores[-1]
 
     def visit_AnnAssign(self, node: ast.AnnAssign):
@@ -212,3 +217,30 @@ class Translator(NodeVisitor):
             self.visit(node.left),
             self.visit(node.comparators[0]),
         )
+
+    def visit_BoolOp(self, node:ast.BoolOp):
+        """
+        @brief          Creates the instruction
+        @param  node    BoolOp to be visited
+        """
+        assert len(node.values) == 2
+
+        left = self.visit(node.values[0])
+        right = self.visit(node.values[1])
+
+        # FIXME: "aa" and "bb breaks this"
+        assert isinstance(left.type, ir.IntType) and isinstance(right.type,
+                                                                ir.IntType)
+        maxType = max(map(lambda x: (x.width, x), [left.type, right.type]), key=lambda t: t[0])[1]
+
+        if left.type != maxType:
+            left = self._builder.sext(left, maxType)
+        elif right.type != maxType:
+            right = self._builder.sext(right, maxType)
+
+        if type(node.op) == ast.And:
+            instr = self._builder.and_(left, right)
+        else:
+            instr = self._builder.or_(left, right)
+
+        return self._builder.trunc(instr, self._typesMap[Bool])
