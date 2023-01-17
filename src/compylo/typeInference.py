@@ -126,3 +126,8 @@ class TypeInference(NodeVisitor):
     def visit_BoolOp(self, node: ast.BoolOp):
         node.typ = Bool
         self.visit_list(node.values)
+
+    def visit_Compare(self, node: ast.Compare):
+        node.typ = Bool
+        self.visit(node.left)
+        self.visit_list(node.comparators)
