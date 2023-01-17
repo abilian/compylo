@@ -122,3 +122,7 @@ class TypeInference(NodeVisitor):
     def visit_UnaryOp(self, node: ast.UnaryOp):
         self.visit(node.operand)
         node.typ = node.operand.typ
+
+    def visit_BoolOp(self, node: ast.BoolOp):
+        node.typ = Bool
+        self.visit_list(node.values)
