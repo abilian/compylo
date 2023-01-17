@@ -25,6 +25,10 @@ class DesugarVisitor(NodeTransformer):
         return None
 
     def visit_BinOp(self, node):
+        """
+        @brief          Desugaring common BinOp tricks, such as `a * "a"`
+        @param  node    BinOp to be visited
+        """
         if type(node.op) != ast.Mult:
             return node
 
@@ -36,6 +40,10 @@ class DesugarVisitor(NodeTransformer):
                 return node
 
     def visit_Compare(self, node: ast.Compare):
+        """
+        @brief          Turns `a < b < c` into `a < b and b < c` (from Python doc)
+        @param  node    Compare to be visited
+        """
         opsLen = len(node.ops)
         assert opsLen == len(node.comparators)
         if opsLen == 1:
@@ -49,12 +57,13 @@ class DesugarVisitor(NodeTransformer):
             groups.append(compare)
             left = right
 
-        return ast.BoolOp(ast.And(), groups)
+        return self.visit(ast.BoolOp(ast.And(), groups)) # desugaring the And list as we go
+
 
     def visit_AugAssign(self, node: ast.AugAssign):
         """
         @brief          Transforms `a += b` in `a = a + b`
-        @param  node    AugAssign to be transformed
+        @param  node    AugAssign to be visited
         """
         return ast.Assign([node.target], ast.BinOp(node.target, node.op,
                                                    node.value))
@@ -69,3 +78,22 @@ class DesugarVisitor(NodeTransformer):
                 return node.operand
             case ast.USub:
                 return ast.BinOp(ast.Constant(0), ast.Sub(), node.operand)
+
+    def visit_BoolOp(self, node: ast.BoolOp):
+        """
+        @brief          Turns a BoolOp with more than 2 values into multiple
+                        BoolOp within each other
+        @param  node    BoolOp to be visited
+
+        For some reason, BoolOp is not a binary operator.
+        `1 and 2 and 3` is a single node in the ast, but this is a problem for
+        later translation. So turning into a chain of binary nodes
+        """
+        assert len(node.values) > 1
+        if len(node.values) == 2:
+            return node # the node is binary, stop there:
+
+        left = node.values.pop(0)
+        right = self.visit(node)
+
+        return ast.BoolOp(node.op, [left, right])
