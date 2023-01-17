@@ -22,6 +22,7 @@ class Translator(NodeVisitor):
             String: ir.IntType(8).as_pointer(),
         }
         self._allocated = {}
+        self._count = 0
 
     def __call__(self, node):
         self.visit(node)
@@ -92,7 +93,23 @@ class Translator(NodeVisitor):
         @param  node    Constant to be visited
         """
         # create a constant.
-        return ir.Constant(self._typesMap[node.typ], node.value)
+        if node.typ == Int or node.typ == Float:
+            return ir.Constant(self._typesMap[node.typ], node.value)
+
+        if node.typ == Bool:
+            return ir.Constant(self._typesMap[node.typ], int(node.value))
+
+        if node.typ == String:
+            val = node.value + '\00'
+            zero = ir.Constant(self._typesMap[Int], 0)
+            stringtype = ir.ArrayType(ir.IntType(8), len(val))
+            var = ir.GlobalVariable(self.module, stringtype, 'str.{self._count}')
+            var.initializer = ir.Constant(stringtype, bytearray(val, 'ascii'))
+            self._count += 1
+            return var.gep((zero, zero))
+
+        raise NotImplementedError(f'type {node.typ} is not yet implemented')
+
 
     def visit_Name(self, node):
         """
