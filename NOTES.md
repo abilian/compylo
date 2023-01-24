@@ -252,4 +252,64 @@ Question du main:
 
 Voir pour les listes
 
-#### Semaine du 16/01
+#### Semaine du 23/01
+
+Les boucles While basiques telles que
+```
+a = 0
+while a < 5:
+    a += 1
+```
+fonctionnent !
+
+
+##### Désucrage
+Une partie basique est faite, le reste est à faire.
+Notamment ne pas supporter que les Name.
+Un soucis sera les constructions du style:
+```
+a = "toto"
+b = a[0] * 5
+```
+Qui devrait être désucrer, mais `a[0]` est un Subscript, il faudrait donc un
+moyen d'en récupérer la valeur. Pour le moment Subscript n'est géré à aucun
+endroit dans le projet.
+
+De la même manière, on aura des problèmes avec
+```
+def f() -> str:
+    return "a"
+a = f() * 2
+```
+Qu'on aimerait désucrer aussi. Mais là ça demande globalement de run la fonction
+compile-time, c'est pas possible...
+
+Une solution serait de typer fortement le langage, et de tout bonnement
+interdire ce genre de constructions, car trop complexe à gérer AOT.
+
+
+#### Boucles For
+
+En C, en C++, etc. Une boucle For est trivialement désucrable en While.
+Néanmoins en Python c'est plus compliqué puisque la boucle For itère plus ou
+moins toujours sur une structure array-like.
+Le désucrage paraît donc compliqué, il faut probablementn gérer les 2 en même
+différemment.
+Les string étant des `ArrayType` en LLVM, quelque chose du type
+```
+for c in "Hello World!":
+    ...
+```
+ne devrait pas poser trop de soucis.
+Il faudra néanmoins penser à la suite avec les itérables. (Toujours pas sûr de
+comment représenter les listes, voir ArrayType et VectorType en LLVM)
+
+
+##### Scope global & main
+
+On peut utiliser `self._builder.block` dans Translator pour savoir si l'on est
+actuellement dans un Basic Block (BB).
+Si ce n'est pas le cas, alors jump dans le BB main.
+Il faut modifier `__init__` pour créer la fonction, save son BB d'entrée et on
+peut imaginer une fonction auxiliaire qui jump à la fin du BB et ajoute ce qu'il
+y a à ajouter si `self._builder.block` est None
