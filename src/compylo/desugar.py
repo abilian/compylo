@@ -7,7 +7,6 @@ from .visitor import NodeTransformer
 from .types import Int, String
 from .renamer import Renamer
 
-
 class DesugarVisitor(NodeTransformer):
     def __call__(self, node):
         n = self.visit(node)
@@ -67,7 +66,11 @@ class DesugarVisitor(NodeTransformer):
         @brief          Transforms `a += b` in `a = a + b`
         @param  node    AugAssign to be visited
         """
-        return ast.Assign([node.target], ast.BinOp(node.target, node.op,
+        copy = node.target
+        if isinstance(copy, ast.Name):
+            copy.ctx = ast.Load()
+
+        return ast.Assign([node.target], ast.BinOp(copy, node.op,
                                                    node.value))
 
     def visit_UnaryOp(self, node):
