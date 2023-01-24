@@ -5,12 +5,14 @@ from .typeChecker import TypeChecker
 from .typeInference import TypeInference
 from .visitor import NodeTransformer
 from .types import Int, String
+from .renamer import Renamer
 
 
 class DesugarVisitor(NodeTransformer):
     def __call__(self, node):
         n = self.visit(node)
         Binder()(n)
+        Renamer()(n)
         TypeInference()(n)
         TypeChecker()(n)
         return n
