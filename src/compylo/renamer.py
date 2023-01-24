@@ -10,11 +10,13 @@ class Renamer(NodeVisitor):
             each renaming
     """
 
-    counter = 0
+    def __init__(self):
+        self._counter = 0
+        self._defMap = {} # mapping of definition with their names
 
     def __gen_Name(self, name: str):
-        res = f"{name}__{Renamer.counter}"
-        Renamer.counter += 1
+        res = f"{name}__{self._counter}"
+        self._counter += 1
         return res
 
     def __change_Name_id(self, node: ast.Name, definition):
@@ -31,12 +33,14 @@ class Renamer(NodeVisitor):
     def visit_FunctionDef(self, node):
         newName = self.__gen_Name(node.name)
         node.name = newName
+        self._defMap[node.definition] = newName
 
         self.visit(node.args)
         self.visit_list(node.body)
 
     def visit_arg(self, node):
         node.arg = self.__gen_Name(node.arg)
+        self._defMap[node.definition] = node.arg
 
     def visit_AnnAssign(self, node):
         self.visit(node.target)
@@ -44,7 +48,11 @@ class Renamer(NodeVisitor):
 
     def visit_Name(self, node):
         if isinstance(node.ctx, ast.Store):
-            node.id = self.__gen_Name(node.id)
+            if node.definition in self._defMap:
+                node.id = self.__gen_Name(node.id)
+                self._defMap[node.definition] = node.id
+            else:
+                self.__change_Name_id(node, node.definition)
         elif isinstance(node.ctx, ast.Load):
             self.__change_Name_id(node, node.definition)
         else:
