@@ -83,6 +83,18 @@ class Printer(NodeVisitor):
 
         self.visit(node.value)
 
+    def visit_AugAssign(self, node: ast.AugAssign):
+        opMap = {
+            ast.Add: " += ",
+            ast.Sub: " -= ",
+            ast.Mult: " *= ",
+            ast.Div: " /= ",
+            ast.FloorDiv: " //= ",
+        }
+        self.visit(node.target)
+        self.__print(opMap[type(node.op)])
+        self.visit(node.value)
+
     def visit_Constant(self, node: ast.Constant):
         self.__print(node.value)
 
@@ -98,24 +110,21 @@ class Printer(NodeVisitor):
         self.__decrIndent()
 
     def visit_Compare(self, node: ast.Compare):
-        self.visit(node.left)
-        for op in node.ops:
-            match type(op):
-                case ast.Eq:
-                    self.__print(" == ")
-                case ast.NotEq:
-                    self.__print(" != ")
-                case ast.Gt:
-                    self.__print(" > ")
-                case ast.GtE:
-                    self.__print(" >= ")
-                case ast.Lt:
-                    self.__print(" < ")
-                case ast.LtE:
-                    self.__print(" <= ")
+        opMap = {
+            ast.Eq: " == ",
+            ast.NotEq: " != ",
+            ast.Gt: " > ",
+            ast.GtE: " >= ",
+            ast.Lt: " < ",
+            ast.LtE: " >= ",
+        }
 
-        self.visit_list(node.comparators)
-        print(":")
+        self.visit(node.left)
+        for i in range(len(node.comparators)):
+            instr = node.comparators[i]
+            op = node.ops[i]
+            self.__print(opMap[type(op)])
+            self.visit(instr)
 
     def visit_BinOp(self, node: ast.BinOp):
         self.visit(node.left)
@@ -154,7 +163,7 @@ class Printer(NodeVisitor):
             self.visit_list(node.orelse)
             self.__decrIndent()
 
-    def visit_Continue(self, node: ast.Constant):
+    def visit_Continue(self, node: ast.Continue):
         self.__printWithDef('continue # ', node)
 
     def visit_Break(self, node: ast.Break):
