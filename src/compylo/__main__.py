@@ -52,13 +52,13 @@ def setup_parser():
 
 def get_action(action: str):
     actionMap = {
-        "print": Printer(),
-        "bind": Binder(),
-        "rename": Renamer(),
-        "infer": TypeInference(),
-        "type": TypeChecker(),
-        "desugar": DesugarVisitor(),
-        "llvm-compute": Translator("wasm32-unknown-wasi"),
+        "print": Printer,
+        "bind": Binder,
+        "rename": Renamer,
+        "infer": TypeInference,
+        "type": TypeChecker,
+        "desugar": DesugarVisitor,
+        "llvm-compute": Translator,
     }
 
     return actionMap[action]
@@ -76,11 +76,11 @@ def dependencies(action: str, node: ast.AST):
     }
 
     if not dependenciesMap[action]:
-        return get_action(action)(node)
+        return get_action(action)()(node)
 
     dependencies(dependenciesMap[action], node)
 
-    return get_action(action)(node)
+    return get_action(action)()(node)
 
 
 def arg_action(args: argparse.Namespace):
