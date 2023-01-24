@@ -13,8 +13,10 @@ class Translator(NodeVisitor):
         self.module.triple = (
             triple if triple is not None else "x86_64-unknown-linux-gnu"
         )
-        self._functionMap = {}
-        self._typesMap = {
+
+        self._functionMap = {} # Maps the function name to the function block in LLVM
+        self._loopMap = {}  # Maps each loop to the the pair (testBB, endBB)
+        self._typesMap = {  # Maps the type from .types to LLVM Type
             Int: ir.IntType(64),
             Float: ir.DoubleType(),
             Bool: ir.IntType(1),
@@ -37,7 +39,7 @@ class Translator(NodeVisitor):
         func = self._functionMap[node.name]
         # FIXME: equivalent of llvmBuilder<>::saveIP() in llvmlite
 
-        entry = func.append_basic_block()  # function basic block
+        entry = func.append_basic_block(f"{node.name}_entry")  # function basic block
         self._builder.position_at_end(entry)  # start at end of basic block
         self.visit_list(node.args.args)
 
@@ -108,7 +110,8 @@ class Translator(NodeVisitor):
             self._count += 1
             return var.gep((zero, zero))
 
-        raise NotImplementedError(f'type {node.typ} is not yet implemented')
+        raise NotImplementedError(f"Type {node.typ} is not yet implemented")
+
 
 
     def visit_Name(self, node):
@@ -151,6 +154,7 @@ class Translator(NodeVisitor):
         @param  node    AnnAssign to be visited
         """
         value = self.visit(node.value)
+        self.visit(node.target)
 
         if not self._allocated[node.target.id]:
             self.visit(node.target)
@@ -218,7 +222,7 @@ class Translator(NodeVisitor):
             self.visit(node.comparators[0]),
         )
 
-    def visit_BoolOp(self, node:ast.BoolOp):
+    def visit_BoolOp(self, node: ast.BoolOp):
         """
         @brief          Creates the instruction
         @param  node    BoolOp to be visited
@@ -244,3 +248,34 @@ class Translator(NodeVisitor):
             instr = self._builder.or_(left, right)
 
         return self._builder.trunc(instr, self._typesMap[Bool])
+
+    def visit_While(self, node: ast.While):
+        """
+        @brief          Translates the loop by creating 3 BB:
+                        - 1 for the condition,
+                        - 1 for the body,
+                        - 1 for the loop exit.
+        @param  node    While to be visited
+        """
+        testBlock = self._builder.append_basic_block(f"while{self._count}_test")
+        bodyBlock = self._builder.append_basic_block(f"while{self._count}_body")
+        endBlock = self._builder.append_basic_block(f"while{self._count}_end")
+        self._loopMap[node] = (testBlock, endBlock)
+        self._builder.branch(testBlock)
+
+        self._builder.position_at_end(testBlock)
+        testRes = self.visit(node.test)
+        self._builder.cbranch(testRes, bodyBlock, endBlock)
+
+        self._builder.position_at_end(bodyBlock)
+        self.visit_list(node.body)
+        self._builder.branch(testBlock)
+
+        self._builder.position_at_end(endBlock)
+        self.visit_list(node.orelse)
+
+    def visit_Break(self, node: ast.Break):
+        return self._builder.branch(self._loopMap[node.definition][1])
+
+    def visit_Continue(self, node: ast.Continue):
+        return self._builder.branch(self._loopMap[node.definition][0])

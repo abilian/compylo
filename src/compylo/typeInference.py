@@ -94,7 +94,7 @@ class TypeInference(NodeVisitor):
         if isinstance(node.ctx, ast.Load):
             node.typ = node.definition.typ
         elif isinstance(node.ctx, ast.Store):
-            pass
+            pass # Means we're in left side of an assign, will be set by caller
         else:
             raise NotImplementedError("del operator not yet implemented")
 
