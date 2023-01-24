@@ -73,11 +73,13 @@ class Binder(NodeVisitor):
                         sets the node's definition to itself.
         @param  node    Name to be visited
         """
-        if isinstance(node.ctx, ast.Load):
-            sym = self.map.find(node.id, False)
-            if sym is None:
-                raise UnknownSymbolError(node.id)
+        sym = self.map.find(node.id, False)
+        if sym is not None:
             node.definition = sym.definition
+            return
+
+        if isinstance(node.ctx, ast.Load):
+            raise UnknownSymbolError(node.id)
         elif isinstance(node.ctx, ast.Store):
             sym = Symbol(node.id, definition=node)
             self.map.append(sym)
