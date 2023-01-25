@@ -312,4 +312,18 @@ actuellement dans un Basic Block (BB).
 Si ce n'est pas le cas, alors jump dans le BB main.
 Il faut modifier `__init__` pour créer la fonction, save son BB d'entrée et on
 peut imaginer une fonction auxiliaire qui jump à la fin du BB et ajoute ce qu'il
-y a à ajouter si `self._builder.block` est None
+y a à ajouter si `self._builder.block` est None.
+
+DISCLAIMER: nécessite de calculer les variables en échappement et de faire du
+lambda lifting.
+L'IR LLVM ne supporte pas les fonctions impriquées. Donc en réalité quand on
+utilise une fonction définie dans le scope main dans une fonction, elle est
+échapée par l'interpréteur. Comme LLVM ne supporte pas ça, il faut faire du
+lambda lifting. Càd qu'on va calculer dans la fonction quelles sont les
+variables en échappement, et injecter des arguments immuables à la fonction: les
+variables échapées utilisées dedans.
+
+#### Call du 25/01
+
+https://llvmlite.readthedocs.io/en/latest/user-guide/binding/index.html
+LLVM ir binding -> à voir si ça peut resortir un binaire
