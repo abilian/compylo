@@ -316,7 +316,7 @@ y a à ajouter si `self._builder.block` est None.
 
 DISCLAIMER: nécessite de calculer les variables en échappement et de faire du
 lambda lifting.
-L'IR LLVM ne supporte pas les fonctions impriquées. Donc en réalité quand on
+L'IR LLVM ne supporte pas les fonctions imbriquées. En réalité quand on
 utilise une fonction définie dans le scope main dans une fonction, elle est
 échapée par l'interpréteur. Comme LLVM ne supporte pas ça, il faut faire du
 lambda lifting. Càd qu'on va calculer dans la fonction quelles sont les

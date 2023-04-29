@@ -27,7 +27,7 @@
               {
                 pname = "compylo";
                 version = "0.1";
-                srs = ./.;
+                src = ./.;
                 nativeBuildInputs = [
                   (pkgs.python310.withPackages
                     (p: with p; [ llvmlite ]))
