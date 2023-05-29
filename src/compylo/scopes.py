@@ -8,7 +8,7 @@ class ScopedMap:
     """
 
     def __init__(self):
-        self.symbols: dict[Symbol, list[Symbol]] = {Symbol("global"): []}
+        self.symbols: dict[Symbol, set[Symbol]] = {Symbol("global"): set()}
         self.current: Symbol = Symbol("global")
         self.old: list[Symbol] = []
 
@@ -47,7 +47,7 @@ class ScopedMap:
         Adds a new empty scope into the map
         """
         self.old.append(self.current)
-        self.symbols[name] = []
+        self.symbols[name] = set()
         self.current = name
 
     def pop_scope(self):
@@ -58,13 +58,15 @@ class ScopedMap:
             self.current = self.old[-1]
             self.old.pop()
 
-    def __move(self, old: list[Symbol], looking: str):
-        for scope in self.symbols:
-            for sym in self.symbols[scope]:
-                if sym.name == looking:
-                    self.__move(old, scope.name)
-                    old.append(scope)
+    def append(self, sym):
+        """
+        Adds a symbol into the current scope
+        """
+        self.symbols[self.current].add(sym)
 
+    #
+    # Not used
+    #
     def move_scope(self, scope: str):
         """
         Moves the 'current' scope to a given one, updating 'self.old' as if we
@@ -80,17 +82,17 @@ class ScopedMap:
 
         self.current = Symbol(scope)
 
-    def append(self, sym):
-        """
-        Adds a symbol into the current scope
-        """
-        if sym not in self.symbols[self.current]:
-            self.symbols[self.current].append(sym)
+    def __move(self, old: list[Symbol], looking: str):
+        for scope in self.symbols:
+            for sym in self.symbols[scope]:
+                if sym.name == looking:
+                    self.__move(old, scope.name)
+                    old.append(scope)
 
     def remove(self, sym):
         self.symbols[self.current].remove(sym)
 
-    def find(self, symName: str, current=True):
+    def find(self, sym_name: str, current=True):
         """
         Finds a symbol with a given name in the table.
         Returns None if not found
@@ -103,12 +105,12 @@ class ScopedMap:
 
         for scope in to_search:
             for symbol in self.symbols[scope]:
-                if symbol.name == symName:
+                if symbol.name == sym_name:
                     return symbol
 
         return None
 
-    def contains(self, sym, current=False):
+    def contains(self, sym, current=False) -> bool:
         """
         Checks if a symbol exists in a table, using find
         """

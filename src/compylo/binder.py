@@ -1,7 +1,7 @@
 import ast
 
 from .errors import StatementOutOfLoopError, UnknownSymbolError
-from .scopedMap import ScopedMap
+from .scopes import ScopedMap
 from .symbol import Symbol
 from .visitor import NodeVisitor
 

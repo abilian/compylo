@@ -9,8 +9,8 @@ from .errors import BindError, TypeCheckError
 from .printer import Printer
 from .renamer import Renamer
 from .translator import Translator
-from .typeChecker import TypeChecker
-from .typeInference import TypeInference
+from .type_checker import TypeChecker
+from .type_inference import TypeInference
 
 
 def setup_parser():
