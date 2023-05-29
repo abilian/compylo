@@ -54,7 +54,7 @@ class ScopedMap:
         """
         Removes the last scope
         """
-        if self.old != []:
+        if self.old:
             self.current = self.old[-1]
             self.old.pop()
 
