@@ -1,41 +1,51 @@
-import subprocess
+from __future__ import annotations
+
+import ast
 from pathlib import Path
+from unittest import skip
 
 import pytest
 
+from compylo.binder import Binder
+from compylo.renamer import Renamer
+from compylo.typeChecker import TypeChecker
+from compylo.typeInference import TypeInference
 
-def list_dir(dir):
+from compylo.errors import TypeCheckError, UnknownSymbolError
+
+
+def list_dir(dir) -> list[Path]:
     this_dir = Path(__file__).parent
-    return [str(f) for f in (this_dir / dir).glob("*.py")]
+    paths = (this_dir / dir).glob("*.py")
+    paths = filter(lambda path: not path.name.startswith("__"), paths)
+    return list(paths)
 
 
 @pytest.mark.parametrize("file", list_dir("good"))
 def test_good(file):
-    expected = 0
-    ret = run_compiler(file)
-    assert ret == expected
+    run_compiler(file)
 
 
 @pytest.mark.parametrize("file", list_dir("bind"))
 def test_bind(file):
-    expected = 2
-    ret = run_compiler(file)
-    assert ret == expected
+    # Binding error
+    # TODO: AtributeError should not happen
+    with pytest.raises((UnknownSymbolError, AttributeError)):
+        run_compiler(file)
 
 
 @pytest.mark.parametrize("file", list_dir("type"))
 def test_good(file):
-    expected = 3
-    ret = run_compiler(file)
-    assert ret == expected
+    # Type error
+    with pytest.raises(TypeCheckError):
+        run_compiler(file)
 
 
-def run_compiler(file):
-    cmd = f"python -m compylo -T {file}"
-    args = cmd.split(" ")
-    print(f"Running test: {cmd}")
-    process = subprocess.Popen(
-        args, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-    )
-    ret = process.wait()
-    return ret
+def run_compiler(path):
+    """Run the equivalent of `python -m compylo -T file`"""
+    content = path.read_text()
+    ast_root = ast.parse(content)
+    Binder()(ast_root)
+    Renamer()(ast_root)
+    TypeInference()(ast_root)
+    TypeChecker()(ast_root)

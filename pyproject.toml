@@ -5,13 +5,13 @@ description = "Simple compiler for a static \"Python-lite\" language."
 authors = []
 license = "MIT"
 readme = "README.md"
-packages = [
-  { include = "compylo", from = "src" }
-]
+packages = [{ include = "compylo", from = "src" }]
+
+[tool.poetry.scripts]
+compylo = "compylo.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
 llvmlite = "*"
 termcolor = "*"
 pyyaml = "*"
@@ -19,41 +19,39 @@ pyyaml = "*"
 [tool.poetry.group.dev.dependencies]
 abilian-devtools = "^0.1.6"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
 
 [tool.black]
 line-length = 79
 include = 'src/\.pyi?$'
 
-
-
 [tool.ruff]
 select = [
-    "F",
-    "E",
-    "C90",
-    # "I", <- too many false positives for some reason(s)
-    "UP",
-    # "N",
-    "YTT",
-    "B",
-    "A",
-    "C4",
-    "ICN",
-    "Q",
-    "S",
-    "BLE",
-    "RET",
-    "SIM",
-    "TID",
-    "RUF",
-    "PLC", "PLE", "PLR", "PLW",
+  "F",
+  "E",
+  "C90",
+  # "I", <- too many false positives for some reason(s)
+  "UP",
+  # "N",
+  "YTT",
+  "B",
+  "A",
+  "C4",
+  "ICN",
+  "Q",
+  "S",
+  "BLE",
+  "RET",
+  "SIM",
+  "TID",
+  "RUF",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
 ]
-
 ignore = [
-    "S101", # Asserts
+  "S101", # Asserts
 ]

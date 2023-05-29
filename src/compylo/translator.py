@@ -14,7 +14,9 @@ class Translator(NodeVisitor):
             triple if triple is not None else "x86_64-unknown-linux-gnu"
         )
 
-        self._functionMap = {} # Maps the function name to the function block in LLVM
+        self._functionMap = (
+            {}
+        )  # Maps the function name to the function block in LLVM
         self._loopMap = {}  # Maps each loop to the the pair (testBB, endBB)
         self._typesMap = {  # Maps the type from .types to LLVM Type
             Int: ir.IntType(64),
@@ -39,7 +41,9 @@ class Translator(NodeVisitor):
         func = self._functionMap[node.name]
         # FIXME: equivalent of llvmBuilder<>::saveIP() in llvmlite
 
-        entry = func.append_basic_block(f"{node.name}_entry")  # function basic block
+        entry = func.append_basic_block(
+            f"{node.name}_entry"
+        )  # function basic block
         self._builder.position_at_end(entry)  # start at end of basic block
         self.visit_list(node.args.args)
 
@@ -102,17 +106,17 @@ class Translator(NodeVisitor):
             return ir.Constant(self._typesMap[node.typ], int(node.value))
 
         if node.typ == String:
-            val = node.value + '\00'
+            val = node.value + "\00"
             zero = ir.Constant(self._typesMap[Int], 0)
             stringtype = ir.ArrayType(ir.IntType(8), len(val))
-            var = ir.GlobalVariable(self.module, stringtype, 'str.{self._count}')
-            var.initializer = ir.Constant(stringtype, bytearray(val, 'ascii'))
+            var = ir.GlobalVariable(
+                self.module, stringtype, "str.{self._count}"
+            )
+            var.initializer = ir.Constant(stringtype, bytearray(val, "ascii"))
             self._count += 1
             return var.gep((zero, zero))
 
         raise NotImplementedError(f"Type {node.typ} is not yet implemented")
-
-
 
     def visit_Name(self, node):
         """
@@ -141,8 +145,8 @@ class Translator(NodeVisitor):
             for n in node.targets
         ]
 
-        #stores = []
-        #for n in node.targets:
+        # stores = []
+        # for n in node.targets:
         #    val = self._builder.store(value, self._allocated[n.id])
         #    stores.append(val)
 
@@ -233,9 +237,13 @@ class Translator(NodeVisitor):
         right = self.visit(node.values[1])
 
         # FIXME: "aa" and "bb breaks this"
-        assert isinstance(left.type, ir.IntType) and isinstance(right.type,
-                                                                ir.IntType)
-        maxType = max(map(lambda x: (x.width, x), [left.type, right.type]), key=lambda t: t[0])[1]
+        assert isinstance(left.type, ir.IntType) and isinstance(
+            right.type, ir.IntType
+        )
+        maxType = max(
+            map(lambda x: (x.width, x), [left.type, right.type]),
+            key=lambda t: t[0],
+        )[1]
 
         if left.type != maxType:
             left = self._builder.sext(left, maxType)
@@ -257,8 +265,12 @@ class Translator(NodeVisitor):
                         - 1 for the loop exit.
         @param  node    While to be visited
         """
-        testBlock = self._builder.append_basic_block(f"while{self._count}_test")
-        bodyBlock = self._builder.append_basic_block(f"while{self._count}_body")
+        testBlock = self._builder.append_basic_block(
+            f"while{self._count}_test"
+        )
+        bodyBlock = self._builder.append_basic_block(
+            f"while{self._count}_body"
+        )
         endBlock = self._builder.append_basic_block(f"while{self._count}_end")
         self._loopMap[node] = (testBlock, endBlock)
         self._builder.branch(testBlock)

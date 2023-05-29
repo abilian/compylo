@@ -12,7 +12,7 @@ class Renamer(NodeVisitor):
 
     def __init__(self):
         self._counter = 0
-        self._defMap = {} # mapping of definition with their names
+        self._defMap = {}  # mapping of definition with their names
 
     def __gen_Name(self, name: str):
         res = f"{name}__{self._counter}"

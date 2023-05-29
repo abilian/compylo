@@ -12,8 +12,10 @@ class Binder(NodeVisitor):
     """
 
     def __init__(self):
-        self.map = ScopedMap() # Scope
-        self.loop = None # Loop we're curently in (needed for break and continue)
+        self.map = ScopedMap()  # Scope
+        self.loop = (
+            None  # Loop we're curently in (needed for break and continue)
+        )
 
     def __call__(self, node):
         self.visit(node)

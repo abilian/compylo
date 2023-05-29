@@ -7,6 +7,7 @@ from .visitor import NodeTransformer
 from .types import Int, String
 from .renamer import Renamer
 
+
 class DesugarVisitor(NodeTransformer):
     def __call__(self, node):
         n = self.visit(node)
@@ -58,8 +59,9 @@ class DesugarVisitor(NodeTransformer):
             groups.append(compare)
             left = right
 
-        return self.visit(ast.BoolOp(ast.And(), groups)) # desugaring the And list as we go
-
+        return self.visit(
+            ast.BoolOp(ast.And(), groups)
+        )  # desugaring the And list as we go
 
     def visit_AugAssign(self, node: ast.AugAssign):
         """
@@ -70,8 +72,7 @@ class DesugarVisitor(NodeTransformer):
         if isinstance(copy, ast.Name):
             copy.ctx = ast.Load()
 
-        return ast.Assign([node.target], ast.BinOp(copy, node.op,
-                                                   node.value))
+        return ast.Assign([node.target], ast.BinOp(copy, node.op, node.value))
 
     def visit_UnaryOp(self, node):
         """
@@ -96,7 +97,7 @@ class DesugarVisitor(NodeTransformer):
         """
         assert len(node.values) > 1
         if len(node.values) == 2:
-            return node # the node is binary, stop there:
+            return node  # the node is binary, stop there:
 
         left = node.values.pop(0)
         right = self.visit(node)

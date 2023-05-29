@@ -327,3 +327,5 @@ variables échapées utilisées dedans.
 
 https://llvmlite.readthedocs.io/en/latest/user-guide/binding/index.html
 LLVM ir binding -> à voir si ça peut resortir un binaire
+
+https://discourse.llvm.org/

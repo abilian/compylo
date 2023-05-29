@@ -150,21 +150,21 @@ class Printer(NodeVisitor):
         self.visit(node.operand)
 
     def visit_While(self, node: ast.While):
-        self.__print('while ')
+        self.__print("while ")
         self.visit(node.test)
-        self.__printWithDef(': #', node)
-        self.__print('\n')
+        self.__printWithDef(": #", node)
+        self.__print("\n")
         self.__incrIndent()
         self.visit_list(node.body)
         self.__decrIndent()
         if node.orelse != []:
-            self.__print('else:')
+            self.__print("else:")
             self.__incrIndent()
             self.visit_list(node.orelse)
             self.__decrIndent()
 
     def visit_Continue(self, node: ast.Continue):
-        self.__printWithDef('continue # ', node)
+        self.__printWithDef("continue # ", node)
 
     def visit_Break(self, node: ast.Break):
-        self.__printWithDef('break #', node)
+        self.__printWithDef("break #", node)
