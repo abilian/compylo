@@ -26,8 +26,8 @@ class Printer(NodeVisitor):
     def __print(self, s: str):
         print(s, end="")
 
-    def visit_list(self, l):
-        for instr in l:
+    def visit_list(self, node_list):
+        for instr in node_list:
             self.__printIndent()
             self.visit(instr)
             print()
@@ -60,11 +60,12 @@ class Printer(NodeVisitor):
         self.visit(node.func)
         print("(", end="")
         if node.args:
-            l = len(node.args)
-            self.visit(node.args[0])
-            for i in range(1, l):
+            first = node.args[0]
+            rest = node.args[1:]
+            self.visit(first)
+            for arg in rest:
                 print(", ", end="")
-                self.visit(node.args[i])
+                self.visit(arg)
 
         print(")", end="")
 
@@ -128,6 +129,7 @@ class Printer(NodeVisitor):
 
     def visit_BinOp(self, node: ast.BinOp):
         self.visit(node.left)
+
         match type(node.op):
             case ast.Add:
                 self.__print(" + ")
@@ -139,6 +141,7 @@ class Printer(NodeVisitor):
                 self.__print(" / ")
             case ast.FloorDiv:
                 self.__print(" // ")
+
         self.visit(node.right)
 
     def visit_UnaryOp(self, node: ast.UnaryOp):
@@ -147,6 +150,7 @@ class Printer(NodeVisitor):
                 self.__print("-")
             case ast.UAdd:
                 self.__print("+")
+
         self.visit(node.operand)
 
     def visit_While(self, node: ast.While):

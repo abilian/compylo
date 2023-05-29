@@ -2,8 +2,8 @@ import ast
 
 from .binder import Binder
 from .renamer import Renamer
-from .typeChecker import TypeChecker
-from .typeInference import TypeInference
+from .type_checker import TypeChecker
+from .type_inference import TypeInference
 from .types import Int, String
 from .visitor import NodeTransformer
 
@@ -21,10 +21,11 @@ class DesugarVisitor(NodeTransformer):
         st = right if right.typ == String else left
         num = right if right.typ == Int else left
         # FIXME: st/num can also be Subscript, Name, Function...
-        if type(st) == ast.Constant and type(num) == ast.Constant:
-            return ast.Constant(st.value * num.value)
-
-        return None
+        match st, num:
+            case ast.Constant, ast.Constant:
+                return ast.Constant(st.value * num.value)
+            case _:
+                return None
 
     def visit_BinOp(self, node):
         """

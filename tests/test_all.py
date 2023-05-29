@@ -2,16 +2,15 @@ from __future__ import annotations
 
 import ast
 from pathlib import Path
-from unittest import skip
 
 import pytest
 
 from compylo.binder import Binder
+from compylo.desugar import DesugarVisitor
+from compylo.errors import TypeCheckError, UnknownSymbolError
 from compylo.renamer import Renamer
 from compylo.type_checker import TypeChecker
 from compylo.type_inference import TypeInference
-
-from compylo.errors import TypeCheckError, UnknownSymbolError
 
 
 def list_dir(dir) -> list[Path]:
@@ -49,3 +48,4 @@ def run_compiler(path):
     Renamer()(ast_root)
     TypeInference()(ast_root)
     TypeChecker()(ast_root)
+    DesugarVisitor()(ast_root)

@@ -1,7 +1,13 @@
+from dataclasses import dataclass
+from typing import Any
+
+
+@dataclass(frozen=True)
 class Symbol:
-    def __init__(self, name, definition=None):
-        self.name: str = name
-        self.definition = definition  # The node where the symbol was defined
+    name: str
+
+    # The node where the symbol was defined
+    definition: Any = None
 
     def __str__(self):
         if self.definition is not None:

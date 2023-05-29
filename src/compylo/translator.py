@@ -14,11 +14,11 @@ class Translator(NodeVisitor):
             triple if triple is not None else "x86_64-unknown-linux-gnu"
         )
 
-        self._functionMap = (
+        self._function_map = (
             {}
         )  # Maps the function name to the function block in LLVM
-        self._loopMap = {}  # Maps each loop to the the pair (testBB, endBB)
-        self._typesMap = {  # Maps the type from .types to LLVM Type
+        self._loop_map = {}  # Maps each loop to the the pair (testBB, endBB)
+        self._types_map = {  # Maps the type from .types to LLVM Type
             Int: ir.IntType(64),
             Float: ir.DoubleType(),
             Bool: ir.IntType(1),
@@ -33,12 +33,12 @@ class Translator(NodeVisitor):
         print(self.module)
 
     def _newAlloca(self, node, name):
-        alloca = self._builder.alloca(self._typesMap[node.typ])
+        alloca = self._builder.alloca(self._types_map[node.typ])
         self._allocated[name] = alloca
         return alloca
 
     def _visitFunctionBody(self, node):
-        func = self._functionMap[node.name]
+        func = self._function_map[node.name]
         # FIXME: equivalent of llvmBuilder<>::saveIP() in llvmlite
 
         entry = func.append_basic_block(
@@ -53,14 +53,14 @@ class Translator(NodeVisitor):
         # FIXME: equivalent of llvmBuilder<>::restoreIP() in llvmlite
 
     def _createFunctionType(self, node):
-        retType = self._typesMap[node.typ]
-        argsType = [self._typesMap[a.typ] for a in node.args.args]
+        retType = self._types_map[node.typ]
+        args_type = [self._types_map[a.typ] for a in node.args.args]
 
         # FIXME: check for return type, might be void
 
-        ftype = ir.FunctionType(retType, argsType)
+        ftype = ir.FunctionType(retType, args_type)
         func = ir.Function(self.module, ftype, name=node.name)
-        self._functionMap[node.name] = func
+        self._function_map[node.name] = func
 
     def visit_FunctionDef(self, node: ast.FunctionDef):
         """
@@ -90,7 +90,7 @@ class Translator(NodeVisitor):
         @param  node    Call to be visited
         """
         return self._builder.call(
-            self._functionMap[node.func.id], map(self.visit, node.args)
+            self._function_map[node.func.id], map(self.visit, node.args)
         )
 
     def visit_Constant(self, node):
@@ -100,14 +100,14 @@ class Translator(NodeVisitor):
         """
         # create a constant.
         if node.typ == Int or node.typ == Float:
-            return ir.Constant(self._typesMap[node.typ], node.value)
+            return ir.Constant(self._types_map[node.typ], node.value)
 
         if node.typ == Bool:
-            return ir.Constant(self._typesMap[node.typ], int(node.value))
+            return ir.Constant(self._types_map[node.typ], int(node.value))
 
         if node.typ == String:
             val = node.value + "\00"
-            zero = ir.Constant(self._typesMap[Int], 0)
+            zero = ir.Constant(self._types_map[Int], 0)
             stringtype = ir.ArrayType(ir.IntType(8), len(val))
             var = ir.GlobalVariable(
                 self.module, stringtype, "str.{self._count}"
@@ -241,7 +241,7 @@ class Translator(NodeVisitor):
             right.type, ir.IntType
         )
         maxType = max(
-            map(lambda x: (x.width, x), [left.type, right.type]),
+            ((x.width, x) for x in [left.type, right.type]),
             key=lambda t: t[0],
         )[1]
 
@@ -255,7 +255,7 @@ class Translator(NodeVisitor):
         else:
             instr = self._builder.or_(left, right)
 
-        return self._builder.trunc(instr, self._typesMap[Bool])
+        return self._builder.trunc(instr, self._types_map[Bool])
 
     def visit_While(self, node: ast.While):
         """
@@ -272,7 +272,7 @@ class Translator(NodeVisitor):
             f"while{self._count}_body"
         )
         endBlock = self._builder.append_basic_block(f"while{self._count}_end")
-        self._loopMap[node] = (testBlock, endBlock)
+        self._loop_map[node] = (testBlock, endBlock)
         self._builder.branch(testBlock)
 
         self._builder.position_at_end(testBlock)
@@ -287,7 +287,7 @@ class Translator(NodeVisitor):
         self.visit_list(node.orelse)
 
     def visit_Break(self, node: ast.Break):
-        return self._builder.branch(self._loopMap[node.definition][1])
+        return self._builder.branch(self._loop_map[node.definition][1])
 
     def visit_Continue(self, node: ast.Continue):
-        return self._builder.branch(self._loopMap[node.definition][0])
+        return self._builder.branch(self._loop_map[node.definition][0])

@@ -29,29 +29,35 @@ include = 'src/\.pyi?$'
 
 [tool.ruff]
 select = [
-  "F",
-  "E",
-  "C90",
-  # "I", <- too many false positives for some reason(s)
-  "UP",
-  # "N",
-  "YTT",
-  "B",
-  "A",
-  "C4",
-  "ICN",
-  "Q",
-  "S",
-  "BLE",
-  "RET",
-  "SIM",
-  "TID",
-  "RUF",
-  "PLC",
-  "PLE",
-  "PLR",
-  "PLW",
+    "F",
+    "E",
+    "C90",
+    # "I", <- too many false positives for some reason(s)
+    "UP",
+    # "N",
+    "YTT",
+    "B",
+    "A",
+    "C4",
+    "ICN",
+    "Q",
+    "S",
+    "BLE",
+    "RET",
+    "SIM",
+    "TID",
+    "RUF",
+    "PLC",
+    "PLE",
+    "PLR",
+    "PLW",
 ]
 ignore = [
-  "S101", # Asserts
+    "S101", # Asserts
+    "PLR2004", # Magic values
+    # FIXME later
+    "RET504", # Unnecessary variable assignment before `return` statement
+    "F841", # Local variable `Int` is assigned to but never used
+    "RET505", # Unnecessary `elif` after `return` statement
+    "SIM102", # Use a single `if` statement instead of nested `if` statements
 ]

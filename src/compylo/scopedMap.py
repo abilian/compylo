@@ -34,7 +34,7 @@ class ScopedMap:
             indent += 1
             for sym in self.symbols[key]:
                 s += indent * "    "
-                s += f"{str(sym)}\n"
+                s += f"{sym!s}\n"
             indent -= 1
             s += "\n"
 
@@ -95,13 +95,13 @@ class ScopedMap:
         Finds a symbol with a given name in the table.
         Returns None if not found
         """
-        toSearch: list[Symbol] = [
+        to_search: list[Symbol] = [
             self.current
         ]  # Scopes where the variable can be found
         if not current:
-            toSearch += self.old
+            to_search += self.old
 
-        for scope in toSearch:
+        for scope in to_search:
             for symbol in self.symbols[scope]:
                 if symbol.name == symName:
                     return symbol

@@ -16,9 +16,9 @@ class UnknownSymbolError(BindError):
 
 
 class StatementOutOfLoopError(BindError):
-    def __init__(self, type="", message=None):
+    def __init__(self, stmt="", message=None):
         if message is None:
-            self.message = f"Statement {type} is out of a loop"
+            self.message = f"Statement {stmt} is out of a loop"
         else:
             self.message = message
 

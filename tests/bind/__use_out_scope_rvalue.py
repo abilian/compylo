@@ -4,5 +4,5 @@ x: int = 1
 
 
 def f(a: int) -> int:
-    x = x + 1 # If it was `a = x + 1` this would be valid python.
+    x + 1 # If it was `a = x + 1` this would be valid python.
     return a
