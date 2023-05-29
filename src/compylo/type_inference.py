@@ -4,19 +4,17 @@ from .errors import UnknownTypeError
 from .types import Bool, Float, Int, String
 from .visitor import NodeVisitor
 
+TYPE_MAP = {
+    "int": Int,
+    "str": String,
+    "float": Float,
+    "bool": Bool,
+}
 
 class TypeInference(NodeVisitor):
     """
     @brief Visitor that adds a `typ` attribute into nodes, holding the type
     """
-
-    def __init__(self):
-        self.typeMap = {
-            "int": Int,
-            "str": String,
-            "float": Float,
-            "bool": Bool,
-        }
 
     def __call__(self, node):
         self.visit(node)
@@ -25,11 +23,11 @@ class TypeInference(NodeVisitor):
         """
         Checks if the type `typ` exists
         """
-        return typ in self.typeMap
+        return typ in TYPE_MAP
 
     def __update_Node(self, node, typ):
         if self.__exists(typ):
-            node.typ = self.typeMap[typ]
+            node.typ = TYPE_MAP[typ]
         else:
             raise UnknownTypeError(typ)
 
@@ -49,7 +47,7 @@ class TypeInference(NodeVisitor):
         @param  node    arg to be visited
         """
         typ = node.annotation.id
-        node.typ = self.typeMap[typ]
+        node.typ = TYPE_MAP[typ]
 
     def visit_Call(self, node: ast.Call):
         """
@@ -70,7 +68,7 @@ class TypeInference(NodeVisitor):
         if not self.__exists(typ):
             raise UnknownTypeError(typ)
 
-        node.target.typ = self.typeMap[typ]
+        node.target.typ = TYPE_MAP[typ]
 
     def visit_Assign(self, node: ast.Assign):
         """
@@ -91,19 +89,20 @@ class TypeInference(NodeVisitor):
                         be set somewhere else
         @param  node    Name to be visited
         """
-        if isinstance(node.ctx, ast.Load):
-            node.typ = node.definition.typ
-        elif isinstance(node.ctx, ast.Store):
-            pass  # Means we're in left side of an assign, will be set by caller
-        else:
-            raise NotImplementedError("del operator not yet implemented")
+        match node.ctx:
+            case ast.Load():
+                node.typ = node.definition.typ
+            case ast.Store():
+                pass # Means we're in left side of an assign, will be set by caller
+            case _:
+                raise NotImplementedError("del operator not yet implemented")
 
     def visit_Constant(self, node):
         """
         @brief          Sets the constant's type to the type of its value
         @param  node    Constant to be visited
         """
-        node.typ = self.typeMap[type(node.value).__name__]
+        node.typ = TYPE_MAP[type(node.value).__name__]
 
     def visit_BinOp(self, node: ast.BinOp):
         """
@@ -114,10 +113,11 @@ class TypeInference(NodeVisitor):
         self.visit(node.left)
         self.visit(node.right)
 
-        if isinstance(node.op, ast.FloorDiv):
-            node.typ = Float
-        else:
-            node.typ = node.left.typ
+        match node.op:
+            case ast.FloorDiv():
+                node.typ = Float
+            case _:
+                node.typ = node.left.typ
 
     def visit_UnaryOp(self, node: ast.UnaryOp):
         self.visit(node.operand)

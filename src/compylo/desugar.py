@@ -1,11 +1,11 @@
 import ast
 
 from .binder import Binder
+from .renamer import Renamer
 from .typeChecker import TypeChecker
 from .typeInference import TypeInference
-from .visitor import NodeTransformer
 from .types import Int, String
-from .renamer import Renamer
+from .visitor import NodeTransformer
 
 
 class DesugarVisitor(NodeTransformer):

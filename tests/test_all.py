@@ -8,8 +8,8 @@ import pytest
 
 from compylo.binder import Binder
 from compylo.renamer import Renamer
-from compylo.typeChecker import TypeChecker
-from compylo.typeInference import TypeInference
+from compylo.type_checker import TypeChecker
+from compylo.type_inference import TypeInference
 
 from compylo.errors import TypeCheckError, UnknownSymbolError
 
@@ -35,7 +35,7 @@ def test_bind(file):
 
 
 @pytest.mark.parametrize("file", list_dir("type"))
-def test_good(file):
+def test_type(file):
     # Type error
     with pytest.raises(TypeCheckError):
         run_compiler(file)

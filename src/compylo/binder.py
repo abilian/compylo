@@ -1,6 +1,6 @@
 import ast
 
-from .errors import UnknownSymbolError, StatementOutOfLoopError
+from .errors import StatementOutOfLoopError, UnknownSymbolError
 from .scopedMap import ScopedMap
 from .symbol import Symbol
 from .visitor import NodeVisitor
@@ -80,14 +80,15 @@ class Binder(NodeVisitor):
             node.definition = sym.definition
             return
 
-        if isinstance(node.ctx, ast.Load):
-            raise UnknownSymbolError(node.id)
-        elif isinstance(node.ctx, ast.Store):
-            sym = Symbol(node.id, definition=node)
-            self.map.append(sym)
-            node.definition = node
-        else:
-            raise NotImplementedError("del instruction not yet implemented")
+        match node.ctx:
+            case ast.Load():
+                raise UnknownSymbolError(node.id)
+            case ast.Store():
+                sym = Symbol(node.id, definition=node)
+                self.map.append(sym)
+                node.definition = node
+            case _:
+                raise NotImplementedError("del instruction not yet implemented")
 
     def visit_While(self, node: ast.While):
         """
