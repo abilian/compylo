@@ -1,3 +1,5 @@
+/sandbox
+
 *.*.swp
 .direnv/
 *toto*
