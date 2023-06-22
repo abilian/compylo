@@ -12,12 +12,13 @@ compylo = "compylo.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-llvmlite = "*"
-termcolor = "*"
-pyyaml = "*"
+llvmlite = "^0.40.1"
+termcolor = "^2.3.0"
+pyyaml = "^6.0"
 
 [tool.poetry.group.dev.dependencies]
-abilian-devtools = "^0.1.6"
+abilian-devtools = "^0.5.2"
+mypy = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]
