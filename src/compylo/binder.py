@@ -88,7 +88,9 @@ class Binder(NodeVisitor):
                 self.map.append(sym)
                 node.definition = node
             case _:
-                raise NotImplementedError("del instruction not yet implemented")
+                raise NotImplementedError(
+                    "del instruction not yet implemented"
+                )
 
     def visit_While(self, node: ast.While):
         """

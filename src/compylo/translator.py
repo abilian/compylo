@@ -1,4 +1,5 @@
 import ast
+from typing import Any
 
 from llvmlite import ir
 
@@ -17,7 +18,7 @@ class Translator(NodeVisitor):
         self._function_map = (
             {}
         )  # Maps the function name to the function block in LLVM
-        self._loop_map = {}  # Maps each loop to the the pair (testBB, endBB)
+        self._loop_map = {}  # Maps each loop to the pair (testBB, endBB)
         self._types_map = {  # Maps the type from .types to LLVM Type
             Int: ir.IntType(64),
             Float: ir.DoubleType(),
@@ -174,7 +175,7 @@ class Translator(NodeVisitor):
         assert node.left.typ == Int
         assert node.right.typ == Int
 
-        funMap = {
+        fun_map: dict[type(ast.AST), Any] = {
             ast.Add: self._builder.add,
             ast.Sub: self._builder.sub,
             ast.Mult: self._builder.mul,
@@ -182,7 +183,7 @@ class Translator(NodeVisitor):
             ast.FloorDiv: self._builder.sdiv,
         }
 
-        return funMap[type(node.op)](
+        return fun_map[type(node.op)](
             self.visit(node.left), self.visit(node.right)
         )
 

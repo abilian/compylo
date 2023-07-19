@@ -11,6 +11,7 @@ TYPE_MAP = {
     "bool": Bool,
 }
 
+
 class TypeInference(NodeVisitor):
     """
     @brief Visitor that adds a `typ` attribute into nodes, holding the type
@@ -93,7 +94,7 @@ class TypeInference(NodeVisitor):
             case ast.Load():
                 node.typ = node.definition.typ
             case ast.Store():
-                pass # Means we're in left side of an assign, will be set by caller
+                pass  # Means we're in left side of an assign, will be set by caller
             case _:
                 raise NotImplementedError("del operator not yet implemented")
 
