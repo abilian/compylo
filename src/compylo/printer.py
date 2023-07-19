@@ -4,19 +4,20 @@ from .visitor import NodeVisitor
 
 
 class Printer(NodeVisitor):
-    Indent: int = 0
+    def __init__(self):
+        self._indent = 0
 
     def __extract_address(self, node: ast.AST):
         return str(node).split("at")[1][1:-1]
 
     def __incrIndent(self):
-        Printer.Indent += 4
+        self._indent += 4
 
     def __decrIndent(self):
-        Printer.Indent -= 4
+        self._indent -= 4
 
     def __printIndent(self, s=""):
-        self.__print(Printer.Indent * " " + s)
+        self.__print(self._indent * " " + s)
 
     def __printWithDef(self, toPrint: str, node: ast.AST):
         self.__print(toPrint)

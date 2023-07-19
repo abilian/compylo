@@ -51,7 +51,7 @@ def setup_parser():
 
 
 def get_action(action: str):
-    actionMap = {
+    action_map = {
         "print": Printer,
         "bind": Binder,
         "rename": Renamer,
@@ -61,11 +61,11 @@ def get_action(action: str):
         "llvm-compute": Translator,
     }
 
-    return actionMap[action]
+    return action_map[action]
 
 
 def dependencies(action: str, node: ast.AST):
-    dependenciesMap = {
+    dependencies_map = {
         "print": None,
         "bind": None,
         "rename": "bind",
@@ -75,10 +75,10 @@ def dependencies(action: str, node: ast.AST):
         "llvm-compute": "desugar",
     }
 
-    if not dependenciesMap[action]:
+    if not dependencies_map[action]:
         return get_action(action)()(node)
 
-    dependencies(dependenciesMap[action], node)
+    dependencies(dependencies_map[action], node)
 
     return get_action(action)()(node)
 
